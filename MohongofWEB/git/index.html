@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git命令速查表 - 专业版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .command-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .command-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .command-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .command-card .description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .command-card .code {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #e9ecef;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .command-card .code .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+        }
+
+        .command-card .code .copy-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .command-card .example {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #ffc107;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-tabs {
+                justify-content: center;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Git命令速查表</h1>
+            <p>全面覆盖日常开发中的Git操作命令</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索Git命令...">
+        </div>
+
+        <div class="category-tabs">
+            <div class="tab active" data-category="all">全部命令</div>
+            <div class="tab" data-category="basic">基础操作</div>
+            <div class="tab" data-category="branch">分支管理</div>
+            <div class="tab" data-category="remote">远程仓库</div>
+            <div class="tab" data-category="advanced">高级操作</div>
+            <div class="tab" data-category="troubleshoot">问题排查</div>
+        </div>
+
+        <div class="commands-grid" id="commandsContainer">
+            <!-- 命令卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <footer>
+        <p>Git Cheatsheet &copy; 2024 - 为开发者打造的实用工具</p>
+    </div>
+
+    <script>
+        // Git命令数据
+        const gitCommands = [
+            {
+                category: 'basic',
+                title: '初始化仓库',
+                description: '创建一个新的Git仓库或初始化现有项目',
+                command: 'git init',
+                example: 'git init  # 在当前目录初始化'
+            },
+            {
+                category: 'basic',
+                title: '克隆仓库',
+                description: '克隆远程仓库到本地',
+                command: 'git clone <仓库URL>',
+                example: 'git clone https://github.com/user/repo.git'
+            },
+            {
+                category: 'basic',
+                title: '查看状态',
+                description: '查看工作区和暂存区的状态',
+                command: 'git status',
+                example: 'git status  # 查看当前状态'
+            },
+            {
+                category: 'basic',
+                title: '添加文件到暂存区',
+                description: '将文件添加到暂存区准备提交',
+                command: 'git add <文件或目录>',
+                example: 'git add .  # 添加所有文件\ngit add index.html  # 添加特定文件'
+            },
+            {
+                category: 'basic',
+                title: '提交更改',
+                description: '将暂存区的更改提交到本地仓库',
+                command: 'git commit -m "提交信息"',
+                example: 'git commit -m "修复登录bug"'
+            },
+            {
+                category: 'branch',
+                title: '查看分支',
+                description: '查看所有分支，当前分支前会标有*号',
+                command: 'git branch',
+                example: 'git branch  # 查看本地分支\ngit branch -a  # 查看所有分支'
+            },
+            {
+                category: 'branch',
+                title: '创建分支',
+                description: '基于当前分支创建新分支',
+                command: 'git branch <分支名>',
+                example: 'git branch feature/login'
+            },
+            {
+                category: 'branch',
+                title: '切换分支',
+                description: '切换到指定分支',
+                command: 'git checkout <分支名>',
+                example: 'git checkout main\ngit checkout -b new-feature  # 创建并切换'
+            },
+            {
+                category: 'branch',
+                title: '合并分支',
+                description: '将指定分支合并到当前分支',
+                command: 'git merge <分支名>',
+                example: 'git merge feature/login  # 合并feature/login到当前分支'
+            },
+            {
+                category: 'branch',
+                title: '删除分支',
+                description: '删除指定的分支',
+                command: 'git branch -d <分支名>',
+                example: 'git branch -d old-feature'
+            },
+            {
+                category: 'remote',
+                title: '查看远程仓库',
+                description: '查看已配置的远程仓库',
+                command: 'git remote -v',
+                example: 'git remote -v  # 查看远程仓库地址'
+            },
+            {
+                category: 'remote',
+                title: '添加远程仓库',
+                description: '添加新的远程仓库',
+                command: 'git remote add <名称> <URL>',
+                example: 'git remote add origin https://github.com/user/repo.git'
+            },
+            {
+                category: 'remote',
+                title: '拉取远程更新',
+                description: '从远程仓库拉取最新代码',
+                command: 'git pull',
+                example: 'git pull origin main  # 从origin的main分支拉取'
+            },
+            {
+                category: 'remote',
+                title: '推送到远程',
+                description: '将本地提交推送到远程仓库',
+                command: 'git push',
+                example: 'git push origin main  # 推送到origin的main分支'
+            },
+            {
+                category: 'advanced',
+                title: '查看提交历史',
+                description: '以图形方式查看提交历史',
+                command: 'git log --oneline --graph',
+                example: 'git log --oneline --graph --all  # 查看所有分支的图形化历史'
+            },
+            {
+                category: 'advanced',
+                title: '暂存更改',
+                description: '临时保存工作目录的修改',
+                command: 'git stash',
+                example: 'git stash  # 暂存当前修改\ngit stash pop  # 恢复暂存的修改'
+            },
+            {
+                category: 'advanced',
+                title: '重置提交',
+                description: '撤销提交，但保留文件更改',
+                command: 'git reset --soft HEAD~1',
+                example: 'git reset --soft HEAD~1  # 撤销最后一次提交，保留更改'
+            },
+            {
+                category: 'troubleshoot',
+                title: '查看文件差异',
+                description: '查看工作区与暂存区的差异',
+                command: 'git diff',
+                example: 'git diff  # 查看未暂存的更改\ngit diff --staged  # 查看已暂存的更改'
+            },
+            {
+                category: 'troubleshoot',
+                title: '撤销文件修改',
+                description: '撤销对文件的修改，恢复到上次提交的状态',
+                command: 'git checkout -- <文件名>',
+                example: 'git checkout -- index.html  # 撤销index.html的修改'
+            },
+            {
+                category: 'troubleshoot',
+                title: '删除未跟踪文件',
+                description: '清理工作区中未跟踪的文件',
+                command: 'git clean -fd',
+                example: 'git clean -fd  # 删除所有未跟踪的文件和目录'
+            }
+        ];
+
+        // 初始化页面
+        function initPage() {
+            renderCommands(gitCommands);
+            setupEventListeners();
+        }
+
+        // 渲染命令卡片
+        function renderCommands(commands) {
+            const container = document.getElementById('commandsContainer');
+            container.innerHTML = '';
+
+            commands.forEach(cmd => {
+                const card = document.createElement('div');
+                card.className = `command-card ${cmd.category}`;
+                card.innerHTML = `
+                    <h3>${cmd.title}</h3>
+                    <div class="description">${cmd.description}</div>
+                    <div class="code">
+                        <code>${cmd.command}</code>
+                        <button class="copy-btn" onclick="copyToClipboard('${cmd.command.replace(/'/g, "\\'")}')">复制</button>
+                    </div>
+                    <div class="example">${cmd.example.replace(/\n/g, '<br>')}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 标签切换
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const category = tab.dataset.category;
+                    filterCommands(category);
+                });
+            });
+
+            // 搜索功能
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                filterBySearch(searchTerm);
+            });
+        }
+
+        // 按分类过滤命令
+        function filterCommands(category) {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let filteredCommands = gitCommands;
+
+            if (category !== 'all') {
+                filteredCommands = gitCommands.filter(cmd => cmd.category === category);
+            }
+
+            if (searchTerm) {
+                filteredCommands = filteredCommands.filter(cmd => 
+                    cmd.title.toLowerCase().includes(searchTerm) ||
+                    cmd.description.toLowerCase().includes(searchTerm) ||
+                    cmd.command.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderCommands(filteredCommands);
+        }
+
+        // 按搜索词过滤
+        function filterBySearch(searchTerm) {
+            const activeCategory = document.querySelector('.tab.active').dataset.category;
+            let filteredCommands = gitCommands;
+
+            if (activeCategory !== 'all') {
+                filteredCommands = gitCommands.filter(cmd => cmd.category === activeCategory);
+            }
+
+            if (searchTerm) {
+                filteredCommands = filteredCommands.filter(cmd => 
+                    cmd.title.toLowerCase().includes(searchTerm) ||
+                    cmd.description.toLowerCase().includes(searchTerm) ||
+                    cmd.command.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderCommands(filteredCommands);
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '已复制!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
