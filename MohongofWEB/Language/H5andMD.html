@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术语法手册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6b8cbc;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e1e4e8;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --primary-color: #5d7eb5;
+            --secondary-color: #7a9acf;
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-color: #e6e6e6;
+            --border-color: #2d3748;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .language-switcher {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .language-switcher h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+
+        .language-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-section h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .menu-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .theme-toggle {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* 主内容区域样式 */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 0;
+            transition: margin-left 0.3s;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px 0 0 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .search-box button {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-description {
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+        }
+
+        /* 内容卡片样式 */
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .content-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .content-section h3 {
+            font-size: 20px;
+            margin: 25px 0 15px 0;
+            color: var(--secondary-color);
+        }
+
+        .content-section p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .content-section ul, .content-section ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .command-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .command-table th, .command-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .command-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .command-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .dark-mode .command-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 代码样式 */
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            line-height: 1.5;
+            box-shadow: var(--shadow);
+        }
+
+        code {
+            background-color: #edf2f7;
+            color: #2d3748;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .dark-mode code {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+
+        .example-box {
+            background-color: var(--bg-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        /* 语言内容控制 */
+        .language-content {
+            display: none;
+        }
+
+        .language-content.active {
+            display: block;
+        }
+
+        /* 响应式设计 */
+        @media (min-width: 992px) {
+            .sidebar {
+                transform: translateX(0);
+                position: static;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .main-content.active-sidebar {
+                margin-left: 280px;
+            }
+        }
+
+        /* 语法高亮 */
+        .html-tag { color: #e06c75; }
+        .html-attribute { color: #d19a66; }
+        .html-value { color: #98c379; }
+        .html-comment { color: #5c6370; font-style: italic; }
+
+        .md-header { color: #e06c75; font-weight: bold; }
+        .md-bold { color: #d19a66; font-weight: bold; }
+        .md-italic { color: #d19a66; font-style: italic; }
+        .md-code { color: #98c379; }
+        .md-link { color: #61afef; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-book"></i>
+                <h1>技术语法手册</h1>
+            </div>
+
+            <!-- 语言切换器 -->
+            <div class="language-switcher">
+                <h3>选择语言</h3>
+                <div class="language-buttons">
+                    <button class="lang-btn active" data-lang="html">HTML</button>
+                    <button class="lang-btn" data-lang="markdown">Markdown</button>
+                </div>
+            </div>
+
+            <!-- HTML 菜单 -->
+            <div class="menu-section html-menu">
+                <h3>HTML 语法</h3>
+                <div class="menu-item active" data-section="html-basics">
+                    <i class="fas fa-code"></i>
+                    <span>基础语法</span>
+                </div>
+                <div class="menu-item" data-section="html-tags">
+                    <i class="fas fa-tags"></i>
+                    <span>常用标签</span>
+                </div>
+                <div class="menu-item" data-section="html-forms">
+                    <i class="fas fa-window-restore"></i>
+                    <span>表单元素</span>
+                </div>
+                <div class="menu-item" data-section="html-semantic">
+                    <i class="fas fa-sitemap"></i>
+                    <span>语义化标签</span>
+                </div>
+            </div>
+
+            <!-- Markdown 菜单 -->
+            <div class="menu-section markdown-menu" style="display: none;">
+                <h3>Markdown 语法</h3>
+                <div class="menu-item active" data-section="md-basics">
+                    <i class="fas fa-code"></i>
+                    <span>基础语法</span>
+                </div>
+                <div class="menu-item" data-section="md-formatting">
+                    <i class="fas fa-bold"></i>
+                    <span>文本格式化</span>
+                </div>
+                <div class="menu-item" data-section="md-lists">
+                    <i class="fas fa-list"></i>
+                    <span>列表</span>
+                </div>
+                <div class="menu-item" data-section="md-links">
+                    <i class="fas fa-link"></i>
+                    <span>链接和图片</span>
+                </div>
+            </div>
+
+            <div class="theme-toggle">
+                <span>暗色模式</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <div class="header">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" placeholder="随便写吧，反正这里也搜不到...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            <!-- HTML 内容 -->
+            <div class="language-content active" id="html-content">
+                <h1 class="page-title">HTML 语法手册</h1>
+                <p class="page-description">超文本标记语言，用于创建网页的标准标记语言</p>
+
+                <div class="content-card">
+                    <!-- HTML 基础语法 -->
+                    <div class="content-section active" id="html-basics">
+                        <h2>HTML 基础语法</h2>
+                        <p>HTML（HyperText Markup Language）是用于创建网页的标准标记语言。它描述了网页的结构，由一系列元素组成。</p>
+
+                        <h3>基本文档结构</h3>
+                        <pre><code><span class="html-tag">&lt;!DOCTYPE html&gt;</span>
+<span class="html-tag">&lt;html</span> <span class="html-attribute">lang</span>=<span class="html-value">"zh-CN"</span><span class="html-tag">&gt;</span>
+<span class="html-tag">&lt;head&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-attribute">charset</span>=<span class="html-value">"UTF-8"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-attribute">name</span>=<span class="html-value">"viewport"</span> <span class="html-attribute">content</span>=<span class="html-value">"width=device-width, initial-scale=1.0"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;title&gt;</span>页面标题<span class="html-tag">&lt;/title&gt;</span>
+<span class="html-tag">&lt;/head&gt;</span>
+<span class="html-tag">&lt;body&gt;</span>
+    <span class="html-comment">&lt;!-- 页面内容 --&gt;</span>
+<span class="html-tag">&lt;/body&gt;</span>
+<span class="html-tag">&lt;/html&gt;</span></code></pre>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 说明</div>
+                            <ul>
+                                <li><code>&lt;!DOCTYPE html&gt;</code> 声明文档类型</li>
+                                <li><code>&lt;html&gt;</code> 元素是页面的根元素</li>
+                                <li><code>&lt;head&gt;</code> 包含文档的元数据</li>
+                                <li><code>&lt;body&gt;</code> 包含可见的页面内容</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- HTML 常用标签 -->
+                    <div class="content-section" id="html-tags" style="display: none;">
+                        <h2>HTML 常用标签</h2>
+                        <p>HTML 提供了丰富的标签来定义不同类型的内容。</p>
+
+                        <table class="command-table">
+                            <thead>
+                                <tr>
+                                    <th>标签</th>
+                                    <th>描述</th>
+                                    <th>示例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>&lt;h1&gt; - &lt;h6&gt;</td>
+                                    <td>标题</td>
+                                    <td>&lt;h1&gt;主标题&lt;/h1&gt;</td>
+                                </tr>
+                                <tr>
+                                    <td>&lt;p&gt;</td>
+                                    <td>段落</td>
+                                    <td>&lt;p&gt;这是一个段落&lt;/p&gt;</td>
+                                </tr>
+                                <tr>
+                                    <td>&lt;a&gt;</td>
+                                    <td>链接</td>
+                                    <td>&lt;a href="url"&gt;链接文本&lt;/a&gt;</td>
+                                </tr>
+                                <tr>
+                                    <td>&lt;img&gt;</td>
+                                    <td>图像</td>
+                                    <td>&lt;img src="image.jpg" alt="描述"&gt;</td>
+                                </tr>
+                                <tr>
+                                    <td>&lt;ul&gt; & &lt;li&gt;</td>
+                                    <td>无序列表</td>
+                                    <td>&lt;ul&gt;&lt;li&gt;项目1&lt;/li&gt;&lt;/ul&gt;</td>
+                                </tr>
+                                <tr>
+                                    <td>&lt;div&gt;</td>
+                                    <td>分区容器</td>
+                                    <td>&lt;div&gt;内容块&lt;/div&gt;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- HTML 表单元素 -->
+                    <div class="content-section" id="html-forms" style="display: none;">
+                        <h2>HTML 表单元素</h2>
+                        <p>表单用于收集用户输入，包含各种输入控件。</p>
+
+                        <pre><code><span class="html-tag">&lt;form</span> <span class="html-attribute">action</span>=<span class="html-value">"/submit"</span> <span class="html-attribute">method</span>=<span class="html-value">"post"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;label</span> <span class="html-attribute">for</span>=<span class="html-value">"name"</span><span class="html-tag">&gt;</span>姓名:<span class="html-tag">&lt;/label&gt;</span>
+    <span class="html-tag">&lt;input</span> <span class="html-attribute">type</span>=<span class="html-value">"text"</span> <span class="html-attribute">id</span>=<span class="html-value">"name"</span> <span class="html-attribute">name</span>=<span class="html-value">"name"</span><span class="html-tag">&gt;</span>
+    
+    <span class="html-tag">&lt;label</span> <span class="html-attribute">for</span>=<span class="html-value">"email"</span><span class="html-tag">&gt;</span>邮箱:<span class="html-tag">&lt;/label&gt;</span>
+    <span class="html-tag">&lt;input</span> <span class="html-attribute">type</span>=<span class="html-value">"email"</span> <span class="html-attribute">id</span>=<span class="html-value">"email"</span> <span class="html-attribute">name</span>=<span class="html-value">"email"</span><span class="html-tag">&gt;</span>
+    
+    <span class="html-tag">&lt;input</span> <span class="html-attribute">type</span>=<span class="html-value">"submit"</span> <span class="html-attribute">value</span>=<span class="html-value">"提交"</span><span class="html-tag">&gt;</span>
+<span class="html-tag">&lt;/form&gt;</span></code></pre>
+                    </div>
+
+                    <!-- HTML 语义化标签 -->
+                    <div class="content-section" id="html-semantic" style="display: none;">
+                        <h2>HTML 语义化标签</h2>
+                        <p>语义化标签让网页结构更清晰，有助于SEO和可访问性。</p>
+
+                        <pre><code><span class="html-tag">&lt;header&gt;</span>
+    <span class="html-tag">&lt;nav&gt;</span>导航内容<span class="html-tag">&lt;/nav&gt;</span>
+<span class="html-tag">&lt;/header&gt;</span>
+
+<span class="html-tag">&lt;main&gt;</span>
+    <span class="html-tag">&lt;article&gt;</span>
+        <span class="html-tag">&lt;section&gt;</span>
+            <span class="html-tag">&lt;h1&gt;</span>文章标题<span class="html-tag">&lt;/h1&gt;</span>
+            <span class="html-tag">&lt;p&gt;</span>文章内容...<span class="html-tag">&lt;/p&gt;</span>
+        <span class="html-tag">&lt;/section&gt;</span>
+    <span class="html-tag">&lt;/article&gt;</span>
+
+    <span class="html-tag">&lt;aside&gt;</span>
+        <span class="html-tag">&lt;section&gt;</span>侧边栏内容<span class="html-tag">&lt;/section&gt;</span>
+    <span class="html-tag">&lt;/aside&gt;</span>
+<span class="html-tag">&lt;/main&gt;</span>
+
+<span class="html-tag">&lt;footer&gt;</span>页脚内容<span class="html-tag">&lt;/footer&gt;</span></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Markdown 内容 -->
+            <div class="language-content" id="markdown-content">
+                <h1 class="page-title">Markdown 语法手册</h1>
+                <p class="page-description">轻量级标记语言，使用易读易写的纯文本格式编写文档</p>
+
+                <div class="content-card">
+                    <!-- Markdown 基础语法 -->
+                    <div class="content-section active" id="md-basics">
+                        <h2>Markdown 基础语法</h2>
+                        <p>Markdown 是一种轻量级标记语言，允许人们使用易读易写的纯文本格式编写文档，然后转换成有效的 HTML 文档。</p>
+
+                        <h3>基本语法示例</h3>
+                        <pre><code><span class="md-header"># 标题 1</span>
+<span class="md-header">## 标题 2</span>
+<span class="md-header">### 标题 3</span>
+
+这是一个段落，包含 <span class="md-bold">**粗体文本**</span> 和 <span class="md-italic">*斜体文本*</span>。
+
+还可以使用 `行内代码` 和创建 [链接](https://example.com)。</code></pre>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 说明</div>
+                            <ul>
+                                <li>使用 <code>#</code> 符号创建标题</li>
+                                <li>使用 <code>**文本**</code> 创建粗体文本</li>
+                                <li>使用 <code>*文本*</code> 创建斜体文本</li>
+                                <li>使用反引号创建行内代码</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Markdown 文本格式化 -->
+                    <div class="content-section" id="md-formatting" style="display: none;">
+                        <h2>Markdown 文本格式化</h2>
+                        <p>Markdown 支持多种文本格式化选项。</p>
+
+                        <table class="command-table">
+                            <thead>
+                                <tr>
+                                    <th>格式化类型</th>
+                                    <th>语法</th>
+                                    <th>效果</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>粗体</td>
+                                    <td>**文本** 或 __文本__</td>
+                                    <td><strong>文本</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>斜体</td>
+                                    <td>*文本* 或 _文本_</td>
+                                    <td><em>文本</em></td>
+                                </tr>
+                                <tr>
+                                    <td>粗斜体</td>
+                                    <td>***文本***</td>
+                                    <td><strong><em>文本</em></strong></td>
+                                </tr>
+                                <tr>
+                                    <td>删除线</td>
+                                    <td>~~文本~~</td>
+                                    <td><del>文本</del></td>
+                                </tr>
+                                <tr>
+                                    <td>行内代码</td>
+                                    <td>`代码`</td>
+                                    <td><code>代码</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Markdown 列表 -->
+                    <div class="content-section" id="md-lists" style="display: none;">
+                        <h2>Markdown 列表</h2>
+                        <p>Markdown 支持有序列表和无序列表。</p>
+
+                        <pre><code><span class="md-header">## 无序列表</span>
+- 项目 1
+- 项目 2
+  - 子项目 2.1
+  - 子项目 2.2
+- 项目 3
+
+<span class="md-header">## 有序列表</span>
+1. 第一项
+2. 第二项
+3. 第三项
+
+<span class="md-header">## 任务列表</span>
+- [x] 已完成的任务
+- [ ] 未完成的任务
+- [ ] 另一个任务</code></pre>
+                    </div>
+
+                    <!-- Markdown 链接和图片 -->
+                    <div class="content-section" id="md-links" style="display: none;">
+                        <h2>Markdown 链接和图片</h2>
+                        <p>Markdown 可以轻松创建链接和插入图片。</p>
+
+                        <pre><code><span class="md-header">## 链接</span>
+[链接文本](https://example.com)
+[带标题的链接](https://example.com "标题")
+
+<span class="md-header">## 图片</span>
+![图片描述](image.jpg)
+![带标题的图片](image.jpg "图片标题")
+
+<span class="md-header">## 引用链接</span>
+这是一个 [示例链接][1] 的引用。
+
+[1]: https://example.com</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 汉堡菜单切换
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active-sidebar');
+        });
+
+        // 主题切换
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // 语言切换
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 更新按钮状态
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const lang = this.dataset.lang;
+                
+                // 切换菜单显示
+                document.querySelectorAll('.menu-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                if (lang === 'html') {
+                    document.querySelector('.html-menu').style.display = 'block';
+                    // 重置HTML菜单项状态
+                    document.querySelectorAll('.html-menu .menu-item').forEach((item, index) => {
+                        item.classList.remove('active');
+                        if (index === 0) item.classList.add('active');
+                    });
+                } else {
+                    document.querySelector('.markdown-menu').style.display = 'block';
+                    // 重置Markdown菜单项状态
+                    document.querySelectorAll('.markdown-menu .menu-item').forEach((item, index) => {
+                        item.classList.remove('active');
+                        if (index === 0) item.classList.add('active');
+                    });
+                }
+                
+                // 切换内容显示
+                document.querySelectorAll('.language-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(lang + '-content').classList.add('active');
+                
+                // 显示对应语言的第一个内容部分
+                showSection(lang + '-basics');
+            });
+        });
+
+        // 菜单项点击事件
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const sectionId = this.dataset.section;
+                
+                // 更新菜单项状态
+                this.parentElement.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 显示对应内容
+                showSection(sectionId);
+                
+                // 在移动设备上点击菜单项后关闭菜单
+                if (window.innerWidth < 992) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                    document.querySelector('.main-content').classList.remove('active-sidebar');
+                }
+            });
+        });
+
+        // 显示内容部分
+        function showSection(sectionId) {
+            // 隐藏所有内容部分
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // 显示选中的内容部分
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.style.display = 'block';
+            }
+        }
+
+        // 搜索功能
+        document.querySelector('.search-box button').addEventListener('click', function() {
+            const searchTerm = document.querySelector('.search-box input').value.toLowerCase();
+            const activeLang = document.querySelector('.lang-btn.active').dataset.lang;
+            alert(`在 ${activeLang.toUpperCase()} 中搜索: ${searchTerm}`);
+        });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 恢复主题设置
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            }
+            
+            // 默认显示HTML内容
+            showSection('html-basics');
+        });
+    </script>
+</body>
+</html>

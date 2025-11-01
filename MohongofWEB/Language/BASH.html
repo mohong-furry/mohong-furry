@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>命令行语法手册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6b8cbc;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e1e4e8;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --primary-color: #5d7eb5;
+            --secondary-color: #7a9acf;
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-color: #e6e6e6;
+            --border-color: #2d3748;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .language-switcher {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .language-switcher h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+
+        .language-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-section h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .menu-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .theme-toggle {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* 主内容区域样式 */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 0;
+            transition: margin-left 0.3s;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px 0 0 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .search-box button {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-description {
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+        }
+
+        /* 内容卡片样式 */
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .content-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .content-section h3 {
+            font-size: 20px;
+            margin: 25px 0 15px 0;
+            color: var(--secondary-color);
+        }
+
+        .content-section p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .content-section ul, .content-section ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .command-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .command-table th, .command-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .command-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .command-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .dark-mode .command-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 代码样式 */
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            line-height: 1.5;
+            box-shadow: var(--shadow);
+        }
+
+        code {
+            background-color: #edf2f7;
+            color: #2d3748;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .dark-mode code {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+
+        .example-box {
+            background-color: var(--bg-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        /* 语言内容控制 */
+        .language-content {
+            display: none;
+        }
+
+        .language-content.active {
+            display: block;
+        }
+
+        /* 响应式设计 */
+        @media (min-width: 992px) {
+            .sidebar {
+                transform: translateX(0);
+                position: static;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .main-content.active-sidebar {
+                margin-left: 280px;
+            }
+        }
+
+        /* 语法高亮 */
+        .bash-comment { color: #5c6370; font-style: italic; }
+        .bash-command { color: #e06c75; }
+        .bash-option { color: #d19a66; }
+        .bash-path { color: #98c379; }
+        .bash-variable { color: #61afef; }
+
+        .cmd-command { color: #e06c75; }
+        .cmd-option { color: #d19a66; }
+        .cmd-path { color: #98c379; }
+        .cmd-comment { color: #5c6370; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-terminal"></i>
+                <h1>命令行语法手册</h1>
+            </div>
+
+            <!-- 语言切换器 -->
+            <div class="language-switcher">
+                <h3>选择系统</h3>
+                <div class="language-buttons">
+                    <button class="lang-btn active" data-lang="bash">Linux Bash</button>
+                    <button class="lang-btn" data-lang="cmd">Windows CMD</button>
+                </div>
+            </div>
+
+            <!-- Linux Bash 菜单 -->
+            <div class="menu-section bash-menu">
+                <h3>Linux Bash 命令</h3>
+                <div class="menu-item active" data-section="bash-basics">
+                    <i class="fas fa-folder"></i>
+                    <span>文件和目录</span>
+                </div>
+                <div class="menu-item" data-section="bash-permissions">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>权限管理</span>
+                </div>
+                <div class="menu-item" data-section="bash-process">
+                    <i class="fas fa-tasks"></i>
+                    <span>进程管理</span>
+                </div>
+                <div class="menu-item" data-section="bash-network">
+                    <i class="fas fa-network-wired"></i>
+                    <span>网络命令</span>
+                </div>
+                <div class="menu-item" data-section="bash-scripting">
+                    <i class="fas fa-code"></i>
+                    <span>脚本编程</span>
+                </div>
+            </div>
+
+            <!-- Windows CMD 菜单 -->
+            <div class="menu-section cmd-menu" style="display: none;">
+                <h3>Windows CMD 命令</h3>
+                <div class="menu-item active" data-section="cmd-basics">
+                    <i class="fas fa-folder"></i>
+                    <span>文件和目录</span>
+                </div>
+                <div class="menu-item" data-section="cmd-system">
+                    <i class="fas fa-cog"></i>
+                    <span>系统信息</span>
+                </div>
+                <div class="menu-item" data-section="cmd-network">
+                    <i class="fas fa-network-wired"></i>
+                    <span>网络命令</span>
+                </div>
+                <div class="menu-item" data-section="cmd-advanced">
+                    <i class="fas fa-tools"></i>
+                    <span>高级命令</span>
+                </div>
+                <div class="menu-item" data-section="cmd-batch">
+                    <i class="fas fa-file-code"></i>
+                    <span>批处理脚本</span>
+                </div>
+            </div>
+
+            <div class="theme-toggle">
+                <span>暗色模式</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <div class="header">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" placeholder="随便写吧，反正这里也搜不到...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            <!-- Linux Bash 内容 -->
+            <div class="language-content active" id="bash-content">
+                <h1 class="page-title">Linux Bash 命令手册</h1>
+                <p class="page-description">Bash (Bourne Again SHell) 是大多数 Linux 系统默认的命令行解释器</p>
+
+                <div class="content-card">
+                    <!-- Bash 文件和目录 -->
+                    <div class="content-section active" id="bash-basics">
+                        <h2>文件和目录操作</h2>
+                        <p>Linux 系统中文件和目录管理的基本命令。</p>
+
+                        <table class="command-table">
+                            <thead>
+                                <tr>
+                                    <th>命令</th>
+                                    <th>描述</th>
+                                    <th>示例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ls</td>
+                                    <td>列出目录内容</td>
+                                    <td>ls -la</td>
+                                </tr>
+                                <tr>
+                                    <td>cd</td>
+                                    <td>切换目录</td>
+                                    <td>cd /home/user</td>
+                                </tr>
+                                <tr>
+                                    <td>pwd</td>
+                                    <td>显示当前目录</td>
+                                    <td>pwd</td>
+                                </tr>
+                                <tr>
+                                    <td>mkdir</td>
+                                    <td>创建目录</td>
+                                    <td>mkdir new_folder</td>
+                                </tr>
+                                <tr>
+                                    <td>rm</td>
+                                    <td>删除文件或目录</td>
+                                    <td>rm file.txt</td>
+                                </tr>
+                                <tr>
+                                    <td>cp</td>
+                                    <td>复制文件或目录</td>
+                                    <td>cp source.txt dest.txt</td>
+                                </tr>
+                                <tr>
+                                    <td>mv</td>
+                                    <td>移动或重命名文件</td>
+                                    <td>mv old.txt new.txt</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 常用选项说明</div>
+                            <ul>
+                                <li><code>ls -l</code>：详细列表显示</li>
+                                <li><code>ls -a</code>：显示隐藏文件</li>
+                                <li><code>rm -r</code>：递归删除目录</li>
+                                <li><code>cp -r</code>：递归复制目录</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Bash 权限管理 -->
+                    <div class="content-section" id="bash-permissions" style="display: none;">
+                        <h2>权限管理</h2>
+                        <p>Linux 文件权限和用户管理命令。</p>
+
+                        <pre><code><span class="bash-comment"># 查看文件权限</span>
+<span class="bash-command">ls</span> <span class="bash-option">-l</span> file.txt
+<span class="bash-comment"># -rw-r--r-- 1 user group 1234 Jan 1 12:00 file.txt</span>
+
+<span class="bash-comment"># 修改文件权限</span>
+<span class="bash-command">chmod</span> <span class="bash-option">755</span> script.sh
+<span class="bash-command">chmod</span> <span class="bash-option">+x</span> script.sh
+
+<span class="bash-comment"># 修改文件所有者</span>
+<span class="bash-command">chown</span> <span class="bash-option">user:group</span> file.txt
+
+<span class="bash-comment"># 切换用户</span>
+<span class="bash-command">su</span> <span class="bash-option">-</span> username
+<span class="bash-command">sudo</span> command</code></pre>
+
+                        <h3>权限数字表示法</h3>
+                        <table class="command-table">
+                            <thead>
+                                <tr>
+                                    <th>权限</th>
+                                    <th>数字</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>---</td>
+                                    <td>0</td>
+                                    <td>无权限</td>
+                                </tr>
+                                <tr>
+                                    <td>--x</td>
+                                    <td>1</td>
+                                    <td>执行</td>
+                                </tr>
+                                <tr>
+                                    <td>-w-</td>
+                                    <td>2</td>
+                                    <td>写入</td>
+                                </tr>
+                                <tr>
+                                    <td>-wx</td>
+                                    <td>3</td>
+                                    <td>写入+执行</td>
+                                </tr>
+                                <tr>
+                                    <td>r--</td>
+                                    <td>4</td>
+                                    <td>读取</td>
+                                </tr>
+                                <tr>
+                                    <td>r-x</td>
+                                    <td>5</td>
+                                    <td>读取+执行</td>
+                                </tr>
+                                <tr>
+                                    <td>rw-</td>
+                                    <td>6</td>
+                                    <td>读取+写入</td>
+                                </tr>
+                                <tr>
+                                    <td>rwx</td>
+                                    <td>7</td>
+                                    <td>读取+写入+执行</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bash 进程管理 -->
+                    <div class="content-section" id="bash-process" style="display: none;">
+                        <h2>进程管理</h2>
+                        <p>查看和管理系统进程的命令。</p>
+
+                        <pre><code><span class="bash-comment"># 查看进程</span>
+<span class="bash-command">ps</span> <span class="bash-option">aux</span>
+<span class="bash-command">top</span>
+<span class="bash-command">htop</span>
+
+<span class="bash-comment"># 查找进程</span>
+<span class="bash-command">pgrep</span> process_name
+<span class="bash-command">ps</span> <span class="bash-option">aux</span> | <span class="bash-command">grep</span> process_name
+
+<span class="bash-comment"># 终止进程</span>
+<span class="bash-command">kill</span> <span class="bash-option">-9</span> PID
+<span class="bash-command">pkill</span> process_name
+<span class="bash-command">killall</span> process_name
+
+<span class="bash-comment"># 后台运行进程</span>
+<span class="bash-command">command</span> <span class="bash-option">&</span>
+<span class="bash-command">nohup</span> command <span class="bash-option">&</span>
+
+<span class="bash-comment"># 查看进程树</span>
+<span class="bash-command">pstree</span></code></pre>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 常用信号说明</div>
+                            <ul>
+                                <li><code>SIGTERM (15)</code>：正常终止进程</li>
+                                <li><code>SIGKILL (9)</code>：强制终止进程</li>
+                                <li><code>SIGHUP (1)</code>：挂起信号</li>
+                                <li><code>SIGINT (2)</code>：中断信号 (Ctrl+C)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Bash 网络命令 -->
+                    <div class="content-section" id="bash-network" style="display: none;">
+                        <h2>网络命令</h2>
+                        <p>网络配置和诊断命令。</p>
+
+                        <pre><code><span class="bash-comment"># 网络配置</span>
+<span class="bash-command">ifconfig</span>
+<span class="bash-command">ip</span> addr show
+<span class="bash-command">netstat</span> <span class="bash-option">-tuln</span>
+
+<span class="bash-comment"># 网络测试</span>
+<span class="bash-command">ping</span> google.com
+<span class="bash-command">traceroute</span> google.com
+<span class="bash-command">mtr</span> google.com
+
+<span class="bash-comment"># 端口扫描</span>
+<span class="bash-command">nmap</span> <span class="bash-option">-sS</span> 192.168.1.1
+
+<span class="bash-comment"># 网络下载</span>
+<span class="bash-command">wget</span> http://example.com/file.zip
+<span class="bash-command">curl</span> <span class="bash-option">-O</span> http://example.com/file.zip
+
+<span class="bash-comment"># SSH 连接</span>
+<span class="bash-command">ssh</span> user@hostname
+<span class="bash-command">scp</span> file.txt user@hostname:/path/</code></pre>
+                    </div>
+
+                    <!-- Bash 脚本编程 -->
+                    <div class="content-section" id="bash-scripting" style="display: none;">
+                        <h2>Bash 脚本编程</h2>
+                        <p>Bash 脚本编程基础语法和示例。</p>
+
+                        <pre><code><span class="bash-comment">#!/bin/bash</span>
+<span class="bash-comment"># 这是一个 Bash 脚本示例</span>
+
+<span class="bash-comment"># 变量</span>
+<span class="bash-variable">NAME</span>=<span class="bash-path">"John"</span>
+<span class="bash-command">echo</span> <span class="bash-path">"Hello, $NAME"</span>
+
+<span class="bash-comment"># 条件判断</span>
+<span class="bash-keyword">if</span> [ <span class="bash-variable">$1</span> <span class="bash-option">-gt</span> 10 ]; <span class="bash-keyword">then</span>
+    <span class="bash-command">echo</span> <span class="bash-path">"大于 10"</span>
+<span class="bash-keyword">elif</span> [ <span class="bash-variable">$1</span> <span class="bash-option">-eq</span> 10 ]; <span class="bash-keyword">then</span>
+    <span class="bash-command">echo</span> <span class="bash-path">"等于 10"</span>
+<span class="bash-keyword">else</span>
+    <span class="bash-command">echo</span> <span class="bash-path">"小于 10"</span>
+<span class="bash-keyword">fi</span>
+
+<span class="bash-comment"># 循环</span>
+<span class="bash-keyword">for</span> i <span class="bash-keyword">in</span> {1..5}; <span class="bash-keyword">do</span>
+    <span class="bash-command">echo</span> <span class="bash-path">"数字: $i"</span>
+<span class="bash-keyword">done</span>
+
+<span class="bash-comment"># 函数</span>
+<span class="bash-keyword">function</span> greet() {
+    <span class="bash-command">echo</span> <span class="bash-path">"Hello, $1"</span>
+}
+greet <span class="bash-path">"World"</span></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Windows CMD 内容 -->
+            <div class="language-content" id="cmd-content">
+                <h1 class="page-title">Windows CMD 命令手册</h1>
+                <p class="page-description">Windows 命令提示符，用于执行系统命令和批处理脚本</p>
+
+                <div class="content-card">
+                    <!-- CMD 文件和目录 -->
+                    <div class="content-section active" id="cmd-basics">
+                        <h2>文件和目录操作</h2>
+                        <p>Windows 系统中文件和目录管理的基本命令。</p>
+
+                        <table class="command-table">
+                            <thead>
+                                <tr>
+                                    <th>命令</th>
+                                    <th>描述</th>
+                                    <th>示例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dir</td>
+                                    <td>列出目录内容</td>
+                                    <td>dir</td>
+                                </tr>
+                                <tr>
+                                    <td>cd</td>
+                                    <td>切换目录</td>
+                                    <td>cd C:\Users</td>
+                                </tr>
+                                <tr>
+                                    <td>mkdir</td>
+                                    <td>创建目录</td>
+                                    <td>mkdir new_folder</td>
+                                </tr>
+                                <tr>
+                                    <td>rmdir</td>
+                                    <td>删除目录</td>
+                                    <td>rmdir /s folder</td>
+                                </tr>
+                                <tr>
+                                    <td>del</td>
+                                    <td>删除文件</td>
+                                    <td>del file.txt</td>
+                                </tr>
+                                <tr>
+                                    <td>copy</td>
+                                    <td>复制文件</td>
+                                    <td>copy source.txt dest.txt</td>
+                                </tr>
+                                <tr>
+                                    <td>move</td>
+                                    <td>移动文件</td>
+                                    <td>move old.txt new.txt</td>
+                                </tr>
+                                <tr>
+                                    <td>type</td>
+                                    <td>显示文件内容</td>
+                                    <td>type file.txt</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 常用选项说明</div>
+                            <ul>
+                                <li><code>dir /w</code>：宽列表显示</li>
+                                <li><code>dir /a</code>：显示所有文件（包括隐藏文件）</li>
+                                <li><code>rmdir /s</code>：删除目录树</li>
+                                <li><code>del /f</code>：强制删除只读文件</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- CMD 系统信息 -->
+                    <div class="content-section" id="cmd-system" style="display: none;">
+                        <h2>系统信息命令</h2>
+                        <p>查看和管理 Windows 系统信息的命令。</p>
+
+                        <pre><code><span class="cmd-comment">REM 系统信息</span>
+<span class="cmd-command">systeminfo</span>
+<span class="cmd-command">hostname</span>
+<span class="cmd-command">ver</span>
+
+<span class="cmd-comment">REM 网络配置</span>
+<span class="cmd-command">ipconfig</span>
+<span class="cmd-command">ipconfig</span> <span class="cmd-option">/all</span>
+<span class="cmd-command">ipconfig</span> <span class="cmd-option">/release</span>
+<span class="cmd-command">ipconfig</span> <span class="cmd-option">/renew</span>
+
+<span class="cmd-comment">REM 进程管理</span>
+<span class="cmd-command">tasklist</span>
+<span class="cmd-command">taskkill</span> <span class="cmd-option">/PID</span> 1234
+<span class="cmd-command">taskkill</span> <span class="cmd-option">/IM</span> notepad.exe
+
+<span class="cmd-comment">REM 服务管理</span>
+<span class="cmd-command">sc</span> query
+<span class="cmd-command">net</span> start
+<span class="cmd-command">net</span> stop</code></pre>
+
+                        <h3>系统信息命令示例</h3>
+                        <pre><code><span class="cmd-comment">REM 查看磁盘信息</span>
+<span class="cmd-command">wmic</span> logicaldisk get size,freespace,caption
+
+<span class="cmd-comment">REM 查看内存信息</span>
+<span class="cmd-command">wmic</span> memorychip get capacity
+
+<span class="cmd-comment">REM 查看 CPU 信息</span>
+<span class="cmd-command">wmic</span> cpu get name,NumberOfCores,NumberOfLogicalProcessors</code></pre>
+                    </div>
+
+                    <!-- CMD 网络命令 -->
+                    <div class="content-section" id="cmd-network" style="display: none;">
+                        <h2>网络命令</h2>
+                        <p>网络配置、诊断和连接命令。</p>
+
+                        <pre><code><span class="cmd-comment">REM 网络诊断</span>
+<span class="cmd-command">ping</span> google.com
+<span class="cmd-command">tracert</span> google.com
+<span class="cmd-command">pathping</span> google.com
+
+<span class="cmd-comment">REM 端口和连接</span>
+<span class="cmd-command">netstat</span> <span class="cmd-option">-an</span>
+<span class="cmd-command">telnet</span> hostname port
+
+<span class="cmd-comment">REM 网络共享</span>
+<span class="cmd-command">net</span> use
+<span class="cmd-command">net</span> share
+
+<span class="cmd-comment">REM DNS 查询</span>
+<span class="cmd-command">nslookup</span> google.com
+<span class="cmd-command">nslookup</span> <span class="cmd-option">-type=MX</span> google.com
+
+<span class="cmd-comment">REM 网络配置</span>
+<span class="cmd-command">netsh</span> interface show interface
+<span class="cmd-command">netsh</span> wlan show profiles</code></pre>
+                    </div>
+
+                    <!-- CMD 高级命令 -->
+                    <div class="content-section" id="cmd-advanced" style="display: none;">
+                        <h2>高级命令</h2>
+                        <p>系统管理、注册表和高级功能命令。</p>
+
+                        <pre><code><span class="cmd-comment">REM 注册表操作</span>
+<span class="cmd-command">reg</span> query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft"
+<span class="cmd-command">reg</span> add "HKEY_CURRENT_USER\Test" /v ValueName /t REG_SZ /d "Test Data"
+
+<span class="cmd-comment">REM 计划任务</span>
+<span class="cmd-command">schtasks</span> /query
+<span class="cmd-command">schtasks</span> /create /tn "MyTask" /tr "C:\script.bat" /sc daily
+
+<span class="cmd-comment">REM 事件查看器</span>
+<span class="cmd-command">wevtutil</span> qe System /c:5
+
+<span class="cmd-comment">REM 文件比较</span>
+<span class="cmd-command">fc</span> file1.txt file2.txt
+
+<span class="cmd-comment">REM 磁盘检查</span>
+<span class="cmd-command">chkdsk</span> C:
+<span class="cmd-command">chkdsk</span> C: /f</code></pre>
+
+                        <div class="example-box">
+                            <div class="example-title">⚠️ 注意事项</div>
+                            <ul>
+                                <li>注册表操作需要管理员权限</li>
+                                <li>修改系统设置前请备份重要数据</li>
+                                <li>使用 <code>schtasks</code> 创建计划任务时注意路径格式</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- CMD 批处理脚本 -->
+                    <div class="content-section" id="cmd-batch" style="display: none;">
+                        <h2>批处理脚本编程</h2>
+                        <p>Windows 批处理脚本基础语法和示例。</p>
+
+                        <pre><code><span class="cmd-comment">@echo off</span>
+<span class="cmd-comment">REM 这是一个批处理脚本示例</span>
+
+<span class="cmd-comment">REM 变量</span>
+<span class="cmd-command">set</span> <span class="cmd-variable">NAME</span>=John
+<span class="cmd-command">echo</span> Hello, <span class="cmd-variable">%NAME%</span>!
+
+<span class="cmd-comment">REM 参数</span>
+<span class="cmd-command">echo</span> 第一个参数: <span class="cmd-variable">%1</span>
+<span class="cmd-command">echo</span> 所有参数: <span class="cmd-variable">%*</span>
+
+<span class="cmd-comment">REM 条件判断</span>
+<span class="cmd-command">if</span> <span class="cmd-variable">%1</span> <span class="cmd-option">==</span> "start" (
+    <span class="cmd-command">echo</span> 开始执行...
+) <span class="cmd-command">else</span> <span class="cmd-command">if</span> <span class="cmd-variable">%1</span> <span class="cmd-option">==</span> "stop" (
+    <span class="cmd-command">echo</span> 停止执行...
+) <span class="cmd-command">else</span> (
+    <span class="cmd-command">echo</span> 未知命令
+)
+
+<span class="cmd-comment">REM 循环</span>
+<span class="cmd-command">for</span> <span class="cmd-option">/L</span> <span class="cmd-variable">%%i</span> <span class="cmd-command">in</span> (1,1,5) <span class="cmd-command">do</span> (
+    <span class="cmd-command">echo</span> 数字: <span class="cmd-variable">%%i</span>
+)
+
+<span class="cmd-comment">REM 函数</span>
+<span class="cmd-command">call</span> :greet World
+<span class="cmd-command">goto</span> :eof
+
+:greet
+<span class="cmd-command">echo</span> Hello, <span class="cmd-variable">%1</span>!
+<span class="cmd-command">goto</span> :eof</code></pre>
+
+                        <div class="example-box">
+                            <div class="example-title">💡 批处理脚本技巧</div>
+                            <ul>
+                                <li>使用 <code>@echo off</code> 关闭命令回显</li>
+                                <li>变量使用 <code>%变量名%</code> 格式引用</li>
+                                <li>在循环中使用 <code>%%i</code> 作为变量</li>
+                                <li>使用 <code>call</code> 调用标签作为函数</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 汉堡菜单切换
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active-sidebar');
+        });
+
+        // 主题切换
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // 语言切换
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 更新按钮状态
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const lang = this.dataset.lang;
+                
+                // 切换菜单显示
+                document.querySelectorAll('.menu-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                if (lang === 'bash') {
+                    document.querySelector('.bash-menu').style.display = 'block';
+                    // 重置Bash菜单项状态
+                    document.querySelectorAll('.bash-menu .menu-item').forEach((item, index) => {
+                        item.classList.remove('active');
+                        if (index === 0) item.classList.add('active');
+                    });
+                } else {
+                    document.querySelector('.cmd-menu').style.display = 'block';
+                    // 重置CMD菜单项状态
+                    document.querySelectorAll('.cmd-menu .menu-item').forEach((item, index) => {
+                        item.classList.remove('active');
+                        if (index === 0) item.classList.add('active');
+                    });
+                }
+                
+                // 切换内容显示
+                document.querySelectorAll('.language-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(lang + '-content').classList.add('active');
+                
+                // 显示对应语言的第一个内容部分
+                showSection(lang + '-basics');
+            });
+        });
+
+        // 菜单项点击事件
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const sectionId = this.dataset.section;
+                
+                // 更新菜单项状态
+                this.parentElement.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 显示对应内容
+                showSection(sectionId);
+                
+                // 在移动设备上点击菜单项后关闭菜单
+                if (window.innerWidth < 992) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                    document.querySelector('.main-content').classList.remove('active-sidebar');
+                }
+            });
+        });
+
+        // 显示内容部分
+        function showSection(sectionId) {
+            // 隐藏所有内容部分
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // 显示选中的内容部分
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.style.display = 'block';
+            }
+        }
+
+        // 搜索功能
+        document.querySelector('.search-box button').addEventListener('click', function() {
+            const searchTerm = document.querySelector('.search-box input').value.toLowerCase();
+            const activeLang = document.querySelector('.lang-btn.active').dataset.lang;
+            alert(`在 ${activeLang.toUpperCase()} 中搜索: ${searchTerm}`);
+        });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 恢复主题设置
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            }
+            
+            // 默认显示Bash内容
+            showSection('bash-basics');
+        });
+    </script>
+</body>
+</html>

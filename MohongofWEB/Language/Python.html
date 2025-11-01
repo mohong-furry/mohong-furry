@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 语法手册 - 完整指南</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3776ab;
+            --secondary-color: #ffd343;
+            --accent-color: #306998;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --code-bg: #f8f9fa;
+        }
+
+        .dark-mode {
+            --primary-color: #4a90d9;
+            --secondary-color: #ffde59;
+            --accent-color: #3a7bbf;
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-color: #e9ecef;
+            --border-color: #2d3748;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --code-bg: #2d3748;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="50" font-size="8" fill="rgba(255,255,255,0.1)" text-anchor="middle" dominant-baseline="middle">🐍</text></svg>');
+            opacity: 0.1;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.3);
+            transition: .4s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(32px);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content-section {
+            margin-bottom: 3rem;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            border-left: 6px solid var(--primary-color);
+            transition: transform 0.3s;
+        }
+
+        .content-section:hover {
+            transform: translateY(-2px);
+        }
+        
+        .content-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .content-section h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem 0;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .content-section h4 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.8rem 0;
+            color: var(--accent-color);
+        }
+        
+        .content-section p {
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .content-section ul, .content-section ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-section li {
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .quick-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .nav-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-color);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .nav-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.2rem;
+        }
+
+        .nav-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-color);
+        }
+
+        .nav-card p {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--text-color);
+            padding: 1.8rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        pre::before {
+            content: "Python 代码";
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+            border-radius: 0 0 8px 0;
+            font-family: inherit;
+        }
+
+        code {
+            background: var(--code-bg);
+            color: var(--text-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .example-box {
+            background: var(--bg-color);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+            position: relative;
+        }
+
+        .example-box::before {
+            content: "💡 示例说明";
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            background: var(--secondary-color);
+            color: #000;
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .command-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card-bg);
+        }
+        
+        .command-table th, .command-table td {
+            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .command-table th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .command-table tr:nth-child(even) {
+            background: rgba(0, 0, 0, 0.03);
+        }
+        
+        .dark-mode .command-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .command-table td:first-child {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--card-bg);
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .content-section {
+                padding: 1.8rem;
+            }
+            
+            .page-title {
+                font-size: 2.2rem;
+            }
+            
+            .quick-nav {
+                grid-template-columns: 1fr;
+            }
+            
+            pre {
+                padding: 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Python 语法高亮 */
+        .python-keyword { color: #ff6b6b; font-weight: bold; }
+        .python-string { color: #51cf66; }
+        .python-comment { color: #868e96; font-style: italic; }
+        .python-function { color: #339af0; font-weight: bold; }
+        .python-number { color: #f783ac; }
+        .python-builtin { color: #20c997; }
+        .python-class { color: #cc5de8; font-weight: bold; }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .dark-mode .info-box {
+            background: linear-gradient(135deg, #1e3a5f, #2d1b47);
+            border-left-color: #64b5f6;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0, #fbe9e7);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .dark-mode .warning-box {
+            background: linear-gradient(135deg, #3e2723, #4e342e);
+            border-left-color: #ffb74d;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .dark-mode .tip-box {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            border-left-color: #81c784;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            background: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 class="page-title">
+                <i class="fab fa-python"></i>
+                Python 语法手册
+            </h1>
+            <p class="page-subtitle">
+                Python 是一种高级、解释型、通用编程语言，由 Guido van Rossum 于 1991 年创建。
+                以其简洁的语法、强大的功能和丰富的生态系统而闻名，广泛应用于 Web 开发、数据科学、人工智能等领域。
+            </p>
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <span>🌙 暗色模式</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="quick-nav">
+            <div class="nav-card" onclick="scrollToSection('history')">
+                <i class="fas fa-history"></i>
+                <h3>Python 历史</h3>
+                <p>了解 Python 的发展历程和设计哲学</p>
+            </div>
+            <div class="nav-card" onclick="scrollToSection('basics')">
+                <i class="fas fa-code"></i>
+                <h3>基础语法</h3>
+                <p>变量、数据类型、基础操作</p>
+            </div>
+            <div class="nav-card" onclick="scrollToSection('control')">
+                <i class="fas fa-sitemap"></i>
+                <h3>控制流程</h3>
+                <p>条件语句、循环语句、流程控制</p>
+            </div>
+            <div class="nav-card" onclick="scrollToSection('functions')">
+                <i class="fas fa-cogs"></i>
+                <h3>函数</h3>
+                <p>函数定义、参数、作用域</p>
+            </div>
+            <div class="nav-card" onclick="scrollToSection('data-structures')">
+                <i class="fas fa-layer-group"></i>
+                <h3>数据结构</h3>
+                <p>列表、字典、元组、集合</p>
+            </div>
+            <div class="nav-card" onclick="scrollToSection('oop')">
+                <i class="fas fa-object-group"></i>
+                <h3>面向对象</h3>
+                <p>类、对象、继承、多态</p>
+            </div>
+        </div>
+
+        <!-- Python 历史部分 -->
+        <div class="content-section" id="history">
+            <h2><i class="fas fa-history"></i> Python 历史与设计哲学</h2>
+            
+            <div class="info-box">
+                <h4>🎯 Python 的设计哲学</h4>
+                <p>Python 的设计强调代码的可读性和简洁性。其哲学体现在 Python 之禅（The Zen of Python）中：</p>
+                <ul>
+                    <li>优美胜于丑陋</li>
+                    <li>明了胜于晦涩</li>
+                    <li>简洁胜于复杂</li>
+                    <li>复杂胜于凌乱</li>
+                    <li>扁平胜于嵌套</li>
+                    <li>间隔胜于紧凑</li>
+                    <li>可读性很重要</li>
+                </ul>
+            </div>
+
+            <h3>📅 发展历程</h3>
+            <ul>
+                <li><strong>1989年</strong>：Guido van Rossum 开始开发 Python，作为 ABC 语言的继承者</li>
+                <li><strong>1991年</strong>：Python 0.9.0 发布，包含类、异常处理等特性</li>
+                <li><strong>2000年</strong>：Python 2.0 发布，引入垃圾回收、Unicode 支持</li>
+                <li><strong>2008年</strong>：Python 3.0 发布，不向后兼容的重大更新</li>
+                <li><strong>2020年</strong>：Python 2.7 停止支持，全面转向 Python 3</li>
+            </ul>
+
+            <h3>🌟 Python 的特点</h3>
+            <div class="tip-box">
+                <h4>✨ 主要优势</h4>
+                <ul>
+                    <li><strong>简单易学</strong>：语法清晰，适合编程初学者</li>
+                    <li><strong>高级语言</strong>：无需关心内存管理等底层细节</li>
+                    <li><strong>解释型语言</strong>：无需编译，直接运行</li>
+                    <li><strong>跨平台</strong>：Windows、Linux、macOS 均可运行</li>
+                    <li><strong>丰富的库</strong>：拥有庞大的标准库和第三方库</li>
+                    <li><strong>社区活跃</strong>：拥有庞大的开发者社区</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 基础语法部分 -->
+        <div class="content-section" id="basics">
+            <h2><i class="fas fa-code"></i> Python 基础语法</h2>
+            
+            <div class="info-box">
+                <h4>🎯 基础语法特点</h4>
+                <p>Python 使用缩进来表示代码块，而不是大括号。这使得代码更加整洁和可读。</p>
+            </div>
+
+            <h3>📝 变量和数据类型</h3>
+            <p><strong>用途</strong>：变量用于存储数据，数据类型定义了数据的种类和可执行的操作。</p>
+            
+            <pre><code><span class="python-comment"># 变量定义 - Python 是动态类型语言，无需声明类型</span>
+<span class="python-keyword">name</span> = <span class="python-string">"张三"</span>          <span class="python-comment"># 字符串 (str)</span>
+<span class="python-keyword">age</span> = <span class="python-number">25</span>               <span class="python-comment"># 整数 (int)</span>
+<span class="python-keyword">height</span> = <span class="python-number">1.75</span>           <span class="python-comment"># 浮点数 (float)</span>
+<span class="python-keyword">is_student</span> = <span class="python-keyword">True</span>       <span class="python-comment"># 布尔值 (bool)</span>
+
+<span class="python-comment"># 数据类型检查 - 使用 type() 函数</span>
+<span class="python-keyword">print</span>(<span class="python-function">type</span>(name))        <span class="python-comment"># &lt;class 'str'&gt;</span>
+<span class="python-keyword">print</span>(<span class="python-function">type</span>(age))         <span class="python-comment"># &lt;class 'int'&gt;</span>
+<span class="python-keyword">print</span>(<span class="python-function">type</span>(height))      <span class="python-comment"># &lt;class 'float'&gt;</span>
+<span class="python-keyword">print</span>(<span class="python-function">type</span>(is_student))   <span class="python-comment"># &lt;class 'bool'&gt;</span></code></pre>
+
+            <div class="example-box">
+                <div class="example-title">💡 变量命名规范</div>
+                <ul>
+                    <li>使用有意义的名称（如 <code>user_age</code> 而不是 <code>ua</code>）</li>
+                    <li>使用小写字母和下划线（snake_case）</li>
+                    <li>避免使用 Python 关键字（如 <code>class</code>, <code>def</code> 等）</li>
+                    <li>常量通常使用全大写（如 <code>MAX_SIZE</code>）</li>
+                </ul>
+            </div>
+
+            <h3>🔤 字符串操作</h3>
+            <p><strong>用途</strong>：处理文本数据，包括格式化、分割、连接等操作。</p>
+            
+            <pre><code><span class="python-comment"># 字符串格式化 - f-string (Python 3.6+)</span>
+<span class="python-keyword">name</span> = <span class="python-string">"李四"</span>
+<span class="python-keyword">age</span> = <span class="python-number">30</span>
+<span class="python-keyword">message</span> = <span class="python-string">f"我叫{name}，今年{age}岁"</span>
+<span class="python-keyword">print</span>(message)  <span class="python-comment"># 我叫李四，今年30岁</span>
+
+<span class="python-comment"># 字符串方法</span>
+<span class="python-keyword">text</span> = <span class="python-string">"  Hello, World!  "</span>
+<span class="python-keyword">print</span>(text.<span class="python-function">strip</span>())        <span class="python-comment"># 去除两端空格</span>
+<span class="python-keyword">print</span>(text.<span class="python-function">upper</span>())        <span class="python-comment"># 转为大写</span>
+<span class="python-keyword">print</span>(text.<span class="python-function">split</span>(<span class="python-string">","</span>))      <span class="python-comment"># 分割字符串</span></code></pre>
+        </div>
+
+        <!-- 控制流程部分 -->
+        <div class="content-section" id="control">
+            <h2><i class="fas fa-sitemap"></i> 控制流程</h2>
+            
+            <div class="info-box">
+                <h4>🎯 控制流程的作用</h4>
+                <p>控制流程决定了代码的执行顺序，包括条件判断和循环，是编程中的基本构建块。</p>
+            </div>
+
+            <h3>🔀 条件语句 (if-elif-else)</h3>
+            <p><strong>用途</strong>：根据条件执行不同的代码块。</p>
+            
+            <pre><code><span class="python-comment"># if-elif-else 语句 - 用于多条件判断</span>
+<span class="python-keyword">score</span> = <span class="python-number">85</span>
+
+<span class="python-keyword">if</span> score >= <span class="python-number">90</span>:
+    <span class="python-keyword">grade</span> = <span class="python-string">"A"</span>
+    <span class="python-keyword">print</span>(<span class="python-string">"优秀！"</span>)
+<span class="python-keyword">elif</span> score >= <span class="python-number">80</span>:
+    <span class="python-keyword">grade</span> = <span class="python-string">"B"</span>
+    <span class="python-keyword">print</span>(<span class="python-string">"良好"</span>)
+<span class="python-keyword">elif</span> score >= <span class="python-number">70</span>:
+    <span class="python-keyword">grade</span> = <span class="python-string">"C"</span>
+    <span class="python-keyword">print</span>(<span class="python-string">"中等"</span>)
+<span class="python-keyword">else</span>:
+    <span class="python-keyword">grade</span> = <span class="python-string">"D"</span>
+    <span class="python-keyword">print</span>(<span class="python-string">"需要努力"</span>)
+
+<span class="python-keyword">print</span>(<span class="python-string">f"成绩等级: {grade}"</span>)  <span class="python-comment"># 成绩等级: B</span></code></pre>
+
+            <div class="tip-box">
+                <h4>💡 条件语句最佳实践</h4>
+                <ul>
+                    <li>使用有意义的变量名</li>
+                    <li>避免过深的嵌套</li>
+                    <li>使用 <code>elif</code> 而不是多个 <code>if</code></li>
+                    <li>考虑使用字典或函数来简化复杂的条件逻辑</li>
+                </ul>
+            </div>
+
+            <h3>🔄 循环语句</h3>
+            <p><strong>用途</strong>：重复执行代码块，直到满足特定条件。</p>
+            
+            <pre><code><span class="python-comment"># for 循环 - 遍历序列或可迭代对象</span>
+<span class="python-keyword">fruits</span> = [<span class="python-string">"apple"</span>, <span class="python-string">"banana"</span>, <span class="python-string">"cherry"</span>]
+<span class="python-keyword">for</span> fruit <span class="python-keyword">in</span> fruits:
+    <span class="python-keyword">print</span>(<span class="python-string">f"我喜欢吃 {fruit}"</span>)
+
+<span class="python-comment"># 使用 range() 函数</span>
+<span class="python-keyword">for</span> i <span class="python-keyword">in</span> <span class="python-function">range</span>(<span class="python-number">5</span>):        <span class="python-comment"># 0 到 4</span>
+    <span class="python-keyword">print</span>(i)
+
+<span class="python-comment"># while 循环 - 在条件为真时重复执行</span>
+<span class="python-keyword">count</span> = <span class="python-number">0</span>
+<span class="python-keyword">while</span> count < <span class="python-number">5</span>:
+    <span class="python-keyword">print</span>(<span class="python-string">f"计数: {count}"</span>)
+    count += <span class="python-number">1</span>              <span class="python-comment"># 重要：更新循环条件</span></code></pre>
+
+            <div class="warning-box">
+                <h4>⚠️ 循环注意事项</h4>
+                <ul>
+                    <li>确保循环条件最终会变为 False，避免无限循环</li>
+                    <li>使用 <code>break</code> 提前退出循环</li>
+                    <li>使用 <code>continue</code> 跳过当前迭代</li>
+                    <li>考虑使用列表推导式来简化简单的循环</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 函数部分 -->
+        <div class="content-section" id="functions">
+            <h2><i class="fas fa-cogs"></i> 函数</h2>
+            
+            <div class="info-box">
+                <h4>🎯 函数的作用</h4>
+                <p>函数是将代码组织成可重用块的基本方式，有助于减少重复代码、提高可读性和维护性。</p>
+            </div>
+
+            <h3>📋 函数定义与调用</h3>
+            <p><strong>用途</strong>：封装可重用的代码逻辑。</p>
+            
+            <pre><code><span class="python-comment"># 定义函数 - 使用 def 关键字</span>
+<span class="python-keyword">def</span> <span class="python-function">greet</span>(name):
+    <span class="python-comment">"""这是一个简单的问候函数"""</span>
+    <span class="python-keyword">return</span> <span class="python-string">f"Hello, {name}!"</span>
+
+<span class="python-comment"># 调用函数</span>
+<span class="python-keyword">message</span> = greet(<span class="python-string">"王五"</span>)
+<span class="python-keyword">print</span>(message)  <span class="python-comment"># Hello, 王五!</span>
+
+<span class="python-comment"># 带默认参数的函数</span>
+<span class="python-keyword">def</span> <span class="python-function">introduce</span>(name, age=<span class="python-number">25</span>, city=<span class="python-string">"北京"</span>):
+    <span class="python-keyword">return</span> <span class="python-string">f"我叫{name}，今年{age}岁，来自{city}"</span>
+
+<span class="python-keyword">print</span>(introduce(<span class="python-string">"赵六"</span>))              <span class="python-comment"># 使用默认参数</span>
+<span class="python-keyword">print</span>(introduce(<span class="python-string">"钱七"</span>, <span class="python-number">30</span>, <span class="python-string">"上海"</span>))  <span class="python-comment"># 传递所有参数</span></code></pre>
+
+            <h3>🎭 Lambda 函数</h3>
+            <p><strong>用途</strong>：创建匿名函数，适用于简单的操作。</p>
+            
+            <pre><code><span class="python-comment"># Lambda 函数 - 匿名函数，适用于简单操作</span>
+<span class="python-keyword">square</span> = <span class="python-keyword">lambda</span> x: x ** <span class="python-number">2</span>
+<span class="python-keyword">print</span>(square(<span class="python-number">5</span>))  <span class="python-comment"># 25</span>
+
+<span class="python-comment"># 在排序中使用 lambda</span>
+<span class="python-keyword">students</span> = [
+    {<span class="python-string">"name"</span>: <span class="python-string">"Alice"</span>, <span class="python-string">"score"</span>: <span class="python-number">85</span>},
+    {<span class="python-string">"name"</span>: <span class="python-string">"Bob"</span>, <span class="python-string">"score"</span>: <span class="python-number">92</span>},
+    {<span class="python-string">"name"</span>: <span class="python-string">"Charlie"</span>, <span class="python-string">"score"</span>: <span class="python-number">78</span>}
+]
+
+<span class="python-comment"># 按分数降序排序</span>
+<span class="python-keyword">sorted_students</span> = <span class="python-function">sorted</span>(students, 
+                         key=<span class="python-keyword">lambda</span> x: x[<span class="python-string">"score"</span>], 
+                         reverse=<span class="python-keyword">True</span>)</code></pre>
+
+            <div class="tip-box">
+                <h4>💡 函数设计原则</h4>
+                <ul>
+                    <li>函数应该只做一件事（单一职责原则）</li>
+                    <li>使用有意义的函数名和参数名</li>
+                    <li>为函数添加文档字符串（docstring）</li>
+                    <li>避免函数产生副作用（修改外部状态）</li>
+                    <li>保持函数简短（通常不超过 20 行）</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 数据结构部分 -->
+        <div class="content-section" id="data-structures">
+            <h2><i class="fas fa-layer-group"></i> 数据结构</h2>
+            
+            <div class="info-box">
+                <h4>🎯 数据结构的作用</h4>
+                <p>数据结构用于组织和存储数据，不同的数据结构适用于不同的场景和操作。</p>
+            </div>
+
+            <h3>📊 主要数据结构对比</h3>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>数据结构</th>
+                        <th>特点</th>
+                        <th>用途</th>
+                        <th>示例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>列表 (List)</td>
+                        <td>有序、可变、允许重复</td>
+                        <td>存储有序的项目集合</td>
+                        <td><code>[1, 2, 3]</code></td>
+                    </tr>
+                    <tr>
+                        <td>元组 (Tuple)</td>
+                        <td>有序、不可变、允许重复</td>
+                        <td>存储不可变的数据集合</td>
+                        <td><code>(1, 2, 3)</code></td>
+                    </tr>
+                    <tr>
+                        <td>字典 (Dict)</td>
+                        <td>无序、可变、键值对</td>
+                        <td>存储键值对映射</td>
+                        <td><code>{"name": "John"}</code></td>
+                    </tr>
+                    <tr>
+                        <td>集合 (Set)</td>
+                        <td>无序、可变、不重复</td>
+                        <td>存储唯一元素集合</td>
+                        <td><code>{1, 2, 3}</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>📝 列表操作</h3>
+            <pre><code><span class="python-comment"># 列表创建和基本操作</span>
+<span class="python-keyword">fruits</span> = [<span class="python-string">"apple"</span>, <span class="python-string">"banana"</span>, <span class="python-string">"cherry"</span>]
+
+<span class="python-comment"># 添加元素</span>
+fruits.<span class="python-function">append</span>(<span class="python-string">"orange"</span>)        <span class="python-comment"># 末尾添加</span>
+fruits.<span class="python-function">insert</span>(<span class="python-number">1</span>, <span class="python-string">"grape"</span>)      <span class="python-comment"># 指定位置插入</span>
+
+<span class="python-comment"># 删除元素</span>
+fruits.<span class="python-function">pop</span>()                  <span class="python-comment"># 删除末尾元素</span>
+fruits.<span class="python-function">remove</span>(<span class="python-string">"banana"</span>)       <span class="python-comment"># 删除指定元素</span>
+
+<span class="python-comment"># 列表切片</span>
+<span class="python-keyword">print</span>(fruits[<span class="python-number">1</span>:<span class="python-number">3</span>])           <span class="python-comment"># 索引 1 到 2</span>
+<span class="python-keyword">print</span>(fruits[::<span class="python-number">-1</span>])          <span class="python-comment"># 反转列表</span></code></pre>
+
+            <h3>🔑 字典操作</h3>
+            <pre><code><span class="python-comment"># 字典创建和操作</span>
+<span class="python-keyword">person</span> = {
+    <span class="python-string">"name"</span>: <span class="python-string">"李四"</span>,
+    <span class="python-string">"age"</span>: <span class="python-number">30</span>,
+    <span class="python-string">"city"</span>: <span class="python-string">"北京"</span>
+}
+
+<span class="python-comment"># 访问元素</span>
+<span class="python-keyword">print</span>(person[<span class="python-string">"name"</span>])         <span class="python-comment"># 李四</span>
+<span class="python-keyword">print</span>(person.<span class="python-function">get</span>(<span class="python-string">"age"</span>))      <span class="python-comment"># 30 (推荐使用 get 方法)</span>
+
+<span class="python-comment"># 添加/修改元素</span>
+person[<span class="python-string">"job"</span>] = <span class="python-string">"工程师"</span>      <span class="python-comment"># 添加新键值对</span>
+person[<span class="python-string">"age"</span>] = <span class="python-number">31</span>            <span class="python-comment"># 修改现有值</span>
+
+<span class="python-comment"># 遍历字典</span>
+<span class="python-keyword">for</span> key, value <span class="python-keyword">in</span> person.<span class="python-function">items</span>():
+    <span class="python-keyword">print</span>(<span class="python-string">f"{key}: {value}"</span>)</code></pre>
+        </div>
+
+        <!-- 面向对象部分 -->
+        <div class="content-section" id="oop">
+            <h2><i class="fas fa-object-group"></i> 面向对象编程</h2>
+            
+            <div class="info-box">
+                <h4>🎯 面向对象编程概念</h4>
+                <p>面向对象编程（OOP）是一种编程范式，使用"对象"来设计应用程序。主要概念包括：</p>
+                <ul>
+                    <li><strong>类 (Class)</strong>：对象的蓝图或模板</li>
+                    <li><strong>对象 (Object)</strong>：类的实例</li>
+                    <li><strong>封装 (Encapsulation)</strong>：隐藏内部实现细节</li>
+                    <li><strong>继承 (Inheritance)</strong>：从父类继承属性和方法</li>
+                    <li><strong>多态 (Polymorphism)</strong>：同一操作作用于不同对象</li>
+                </ul>
+            </div>
+
+            <h3>🏗️ 类和对象</h3>
+            <pre><code><span class="python-comment"># 定义类 - 使用 class 关键字</span>
+<span class="python-keyword">class</span> <span class="python-function">Person</span>:
+    <span class="python-comment">"""人类"""</span>
+    
+    <span class="python-comment"># 构造函数 - 初始化对象</span>
+    <span class="python-keyword">def</span> <span class="python-function">__init__</span>(<span class="python-keyword">self</span>, name, age):
+        <span class="python-keyword">self</span>.name = name      <span class="python-comment"># 实例属性</span>
+        <span class="python-keyword">self</span>.age = age
+        <span class="python-keyword">self</span>.__secret = <span class="python-string">"私有属性"</span>  <span class="python-comment"># 私有属性（双下划线）</span>
+    
+    <span class="python-comment"># 实例方法</span>
+    <span class="python-keyword">def</span> <span class="python-function">introduce</span>(<span class="python-keyword">self</span>):
+        <span class="python-keyword">return</span> <span class="python-string">f"我叫{self.name}，今年{self.age}岁"</span>
+    
+    <span class="python-keyword">def</span> <span class="python-function">have_birthday</span>(<span class="python-keyword">self</span>):
+        <span class="python-keyword">self</span>.age += <span class="python-number">1</span>
+        <span class="python-keyword">return</span> <span class="python-string">f"生日快乐！现在{self.age}岁了"</span>
+
+<span class="python-comment"># 创建对象</span>
+<span class="python-keyword">person1</span> = Person(<span class="python-string">"张三"</span>, <span class="python-number">25</span>)
+<span class="python-keyword">print</span>(person1.introduce())      <span class="python-comment"># 我叫张三，今年25岁</span>
+<span class="python-keyword">print</span>(person1.have_birthday())  <span class="python-comment"># 生日快乐！现在26岁了</span></code></pre>
+
+            <h3>👨‍👩‍👧‍👦 继承</h3>
+            <pre><code><span class="python-comment"># 继承 - Student 类继承 Person 类</span>
+<span class="python-keyword">class</span> <span class="python-function">Student</span>(Person):
+    <span class="python-comment">"""学生类"""</span>
+    
+    <span class="python-keyword">def</span> <span class="python-function">__init__</span>(<span class="python-keyword">self</span>, name, age, student_id, major):
+        <span class="python-comment"># 调用父类的构造函数</span>
+        <span class="python-keyword">super</span>().<span class="python-function">__init__</span>(name, age)
+        <span class="python-keyword">self</span>.student_id = student_id
+        <span class="python-keyword">self</span>.major = major
+    
+    <span class="python-comment"># 重写父类方法</span>
+    <span class="python-keyword">def</span> <span class="python-function">introduce</span>(<span class="python-keyword">self</span>):
+        <span class="python-keyword">return</span> (<span class="python-string">f"我叫{self.name}，今年{self.age}岁，"</span>
+                <span class="python-string">f"学号{self.student_id}，专业是{self.major}"</span>)
+    
+    <span class="python-keyword">def</span> <span class="python-function">study</span>(<span class="python-keyword">self</span>):
+        <span class="python-keyword">return</span> <span class="python-string">f"{self.name} 正在学习{self.major}"</span>
+
+<span class="python-comment"># 使用子类</span>
+<span class="python-keyword">student1</span> = Student(<span class="python-string">"李四"</span>, <span class="python-number">20</span>, <span class="python-string">"2023001"</span>, <span class="python-string">"计算机科学"</span>)
+<span class="python-keyword">print</span>(student1.introduce())  <span class="python-comment"># 我叫李四，今年20岁，学号2023001，专业是计算机科学</span>
+<span class="python-keyword">print</span>(student1.study())      <span class="python-comment"># 李四 正在学习计算机科学</span></code></pre>
+
+            <div class="tip-box">
+                <h4>💡 面向对象设计原则</h4>
+                <ul>
+                    <li><strong>单一职责原则</strong>：一个类只负责一个功能领域</li>
+                    <li><strong>开放封闭原则</strong>：对扩展开放，对修改封闭</li>
+                    <li><strong>里氏替换原则</strong>：子类应该能够替换父类</li>
+                    <li><strong>接口隔离原则</strong>：使用多个专门的接口</li>
+                    <li><strong>依赖倒置原则</strong>：依赖于抽象而不是具体实现</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 常用操作总结 -->
+        <div class="content-section">
+            <h2><i class="fas fa-list"></i> 常用Python操作总结</h2>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>操作类型</th>
+                        <th>语法/方法</th>
+                        <th>用途</th>
+                        <th>示例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>字符串操作</td>
+                        <td>f-string, split(), join()</td>
+                        <td>文本处理和格式化</td>
+                        <td><code>f"Hello {name}"</code></td>
+                    </tr>
+                    <tr>
+                        <td>列表操作</td>
+                        <td>append(), pop(), slice</td>
+                        <td>有序数据集合操作</td>
+                        <td><code>list[1:4]</code></td>
+                    </tr>
+                    <tr>
+                        <td>字典操作</td>
+                        <td>get(), keys(), items()</td>
+                        <td>键值对数据操作</td>
+                        <td><code>dict.get(key)</code></td>
+                    </tr>
+                    <tr>
+                        <td>文件操作</td>
+                        <td>open(), read(), write()</td>
+                        <td>文件读写操作</td>
+                        <td><code>with open("file.txt")</code></td>
+                    </tr>
+                    <tr>
+                        <td>异常处理</td>
+                        <td>try-except-finally</td>
+                        <td>错误处理和资源清理</td>
+                        <td><code>try: ... except: ...</code></td>
+                    </tr>
+                    <tr>
+                        <td>导入模块</td>
+                        <td>import, from</td>
+                        <td>代码模块化和重用</td>
+                        <td><code>import math</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Python 语法手册 &copy; 2024 - 从入门到精通的完整指南</p>
+        <p>Python 是一种强大的编程语言，适用于 Web 开发、数据科学、人工智能、自动化脚本等众多领域。</p>
+    </div>
+
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            document.getElementById('theme-toggle').checked = isDarkMode;
+        }
+
+        // 平滑滚动到指定部分
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // 回到顶部
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 显示/隐藏回到顶部按钮
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 恢复主题设置
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-toggle').checked = true;
+            }
+
+            // 为所有代码块添加行号（可选功能）
+            document.querySelectorAll('pre').forEach(pre => {
+                const code = pre.innerHTML;
+                const lines = code.split('\n');
+                const numberedCode = lines.map((line, index) => 
+                    `<span class="line-number">${index + 1}</span>${line}`
+                ).join('\n');
+                pre.innerHTML = numberedCode;
+            });
+        });
+    </script>
+</body>
+</html>
