@@ -221,6 +221,7 @@ while true; do
                     echo "📂 ${dir%/}: $(get_text "normal_dir")"
                 fi
             done
+            read -p "$(get_text "press_enter")"
             ;;
         2)
             echo
@@ -233,6 +234,7 @@ while true; do
                 fi
             done
             echo "$(get_text "all_updated")"
+            read -p "$(get_text "press_enter")"
             ;;
         3)
             echo
@@ -457,8 +459,21 @@ while true; do
             read -p "$(get_text "press_enter")"
             ;;
         6)
-            echo "$(get_text "goodbye")"
-            exit 0  # 退出程序，不需要清屏
+            # 确认退出
+            echo
+            if [ "$CURRENT_LANG" = "zh_CN" ]; then
+                read -p "确认要退出吗？(y/N): " confirm
+            else
+                read -p "Are you sure you want to exit? (y/N): " confirm
+            fi
+            
+            if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
+                echo "$(get_text "goodbye")"
+                exit 0  # 确认退出，不需要清屏
+            else
+                # 不退出，继续循环（会自动清屏）
+                continue
+            fi
             ;;
         *)
             echo "$(get_text "invalid_choice")"
