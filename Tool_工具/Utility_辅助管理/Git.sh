@@ -1,11 +1,26 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 # GitHub仓库管理系统 - 多语言版
-BASE_DIR="/storage/emulated/0/mohong/Github/仓库集合"
+CONFIG_DIR="$HOME/.config/git_manager"
+CONFIG_FILE="$CONFIG_DIR/config"
+DEFAULT_BASE_DIR="$HOME/git_repositories"
 
 # 语言设置
 CURRENT_LANG="zh_CN"
-LANG_FILE="$HOME/.git_manager_lang"
+LANG_FILE="$CONFIG_DIR/language"
+
+# 创建配置目录
+mkdir -p "$CONFIG_DIR"
+
+# 加载配置
+if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
+else
+    # 默认配置
+    BASE_DIR="$DEFAULT_BASE_DIR"
+    # 保存默认配置
+    echo "BASE_DIR=\"$BASE_DIR\"" > "$CONFIG_FILE"
+fi
 
 # 加载保存的语言设置
 if [ -f "$LANG_FILE" ]; then
@@ -25,6 +40,7 @@ TEXT_zh_CN=(
     ["manage_single_repo"]="管理单个仓库"
     ["batch_stage_commit"]="批量设置暂存和提交"
     ["switch_language"]="切换语言"
+    ["change_base_dir"]="更改仓库目录"
     ["exit"]="退出"
     ["input_choice"]="输入选择"
     ["invalid_choice"]="无效选择，请重试"
@@ -80,6 +96,11 @@ TEXT_zh_CN=(
     ["language_changed"]="语言已切换为中文"
     ["switch_to_english"]="切换到英文"
     ["switch_to_chinese"]="切换到中文"
+    ["current_dir"]="当前仓库目录"
+    ["change_dir_prompt"]="请输入新的仓库目录路径"
+    ["dir_changed"]="✅ 目录已更改"
+    ["dir_not_exist"]="❌ 目录不存在，请重新输入"
+    ["config_saved"]="✅ 配置已保存"
 )
 
 # 英文文本
@@ -92,6 +113,7 @@ TEXT_en_US=(
     ["manage_single_repo"]="Manage single repository"
     ["batch_stage_commit"]="Batch stage and commit"
     ["switch_language"]="Switch language"
+    ["change_base_dir"]="Change repository directory"
     ["exit"]="Exit"
     ["input_choice"]="Enter choice"
     ["invalid_choice"]="Invalid choice, please try again"
@@ -147,6 +169,11 @@ TEXT_en_US=(
     ["language_changed"]="Language switched to English"
     ["switch_to_english"]="Switch to English"
     ["switch_to_chinese"]="Switch to Chinese"
+    ["current_dir"]="Current repository directory"
+    ["change_dir_prompt"]="Please enter new repository directory path"
+    ["dir_changed"]="✅ Directory changed"
+    ["dir_not_exist"]="❌ Directory does not exist, please re-enter"
+    ["config_saved"]="✅ Configuration saved"
 )
 
 # 获取文本函数
@@ -173,18 +200,92 @@ switch_language() {
     save_language
 }
 
-# 进入工作目录
-cd "$BASE_DIR" || {
-    echo "$(get_text "enter_dir_error") $BASE_DIR"
-    exit 1
+# 更改基础目录函数
+change_base_directory() {
+    while true; do
+        clear
+        echo "========================================"
+        echo "   $(get_text "change_base_dir")"
+        echo "========================================"
+        echo "$(get_text "current_dir"): $BASE_DIR"
+        echo
+        echo "$(get_text "change_dir_prompt"):"
+        read -p "> " new_dir
+        
+        if [ -z "$new_dir" ]; then
+            continue
+        fi
+        
+        # 展开路径中的 ~
+        new_dir=$(echo "$new_dir" | sed "s|^~|$HOME|")
+        
+        if [ -d "$new_dir" ]; then
+            BASE_DIR="$new_dir"
+            # 保存到配置文件
+            echo "BASE_DIR=\"$BASE_DIR\"" > "$CONFIG_FILE"
+            echo "$(get_text "dir_changed")"
+            echo "$(get_text "config_saved")"
+            read -p "$(get_text "press_enter")"
+            break
+        else
+            echo "$(get_text "dir_not_exist")"
+            read -p "$(get_text "press_enter")"
+        fi
+    done
+}
+
+# 检查并进入工作目录
+check_and_enter_directory() {
+    if [ ! -d "$BASE_DIR" ]; then
+        echo "❌ $(get_text "enter_dir_error"): $BASE_DIR"
+        echo "$(get_text "press_enter")"
+        read
+        return 1
+    fi
+    
+    cd "$BASE_DIR" || {
+        echo "❌ $(get_text "enter_dir_error"): $BASE_DIR"
+        echo "$(get_text "press_enter")"
+        read
+        return 1
+    }
+    return 0
 }
 
 # 主循环
 while true; do
-    clear  # 每次显示主菜单前清屏
+    clear
     echo "========================================"
     echo "   $(get_text "title")"
     echo "========================================"
+    echo "$(get_text "current_dir"): $BASE_DIR"
+    echo
+
+    # 检查目录
+    if ! check_and_enter_directory; then
+        # 如果目录不存在，显示更改目录选项
+        echo
+        echo "$(get_text "select_operation"):"
+        echo "1. $(get_text "change_base_dir")"
+        echo "2. $(get_text "exit")"
+        echo
+        read -p "$(get_text "input_choice") [1-2]: " choice
+        
+        case $choice in
+            1)
+                change_base_directory
+                ;;
+            2)
+                echo "$(get_text "goodbye")"
+                exit 0
+                ;;
+            *)
+                echo "$(get_text "invalid_choice")"
+                read -p "$(get_text "press_enter")"
+                ;;
+        esac
+        continue
+    fi
 
     echo
     echo "$(get_text "select_operation")"
@@ -192,15 +293,16 @@ while true; do
     echo "2. $(get_text "pull_all_updates")"
     echo "3. $(get_text "manage_single_repo")"
     echo "4. $(get_text "batch_stage_commit")"
+    echo "5. $(get_text "change_base_dir")"
     if [ "$CURRENT_LANG" = "zh_CN" ]; then
-        echo "5. $(get_text "switch_to_english")"
+        echo "6. $(get_text "switch_to_english")"
     else
-        echo "5. $(get_text "switch_to_chinese")"
+        echo "6. $(get_text "switch_to_chinese")"
     fi
-    echo "6. $(get_text "exit")"
+    echo "7. $(get_text "exit")"
     echo
     
-    read -p "$(get_text "input_choice") [1-6]: " choice
+    read -p "$(get_text "input_choice") [1-7]: " choice
 
     case $choice in
         1)
@@ -263,7 +365,7 @@ while true; do
                 cd "$selected_repo"
                 
                 while true; do
-                    clear  # 子菜单清屏
+                    clear
                     echo "========================================"
                     echo "   $(get_text "managing_repo"): $selected_repo"
                     echo "========================================"
@@ -295,7 +397,6 @@ while true; do
                             echo "$(get_text "stage_commit_title")"
                             echo "----------------------------------------"
                             
-                            # 显示变更文件
                             echo "$(get_text "changed_files")"
                             git status --short
                             
@@ -353,7 +454,7 @@ while true; do
                             ;;
                         6) 
                             cd "$BASE_DIR"
-                            break  # 直接break，外层循环会清屏
+                            break
                             ;;
                         *) 
                             echo "$(get_text "invalid_choice")"
@@ -375,7 +476,6 @@ while true; do
             echo "$(get_text "batch_stage_title")"
             echo "----------------------------------------"
             
-            # 收集有变更的仓库
             changed_repos=()
             i=1
             for dir in */; do
@@ -455,11 +555,13 @@ while true; do
             read -p "$(get_text "press_enter")"
             ;;
         5)
+            change_base_directory
+            ;;
+        6)
             switch_language
             read -p "$(get_text "press_enter")"
             ;;
-        6)
-            # 确认退出
+        7)
             echo
             if [ "$CURRENT_LANG" = "zh_CN" ]; then
                 read -p "确认要退出吗？(y/N): " confirm
@@ -469,10 +571,7 @@ while true; do
             
             if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
                 echo "$(get_text "goodbye")"
-                exit 0  # 确认退出，不需要清屏
-            else
-                # 不退出，继续循环（会自动清屏）
-                continue
+                exit 0
             fi
             ;;
         *)
