@@ -1,0 +1,457 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+# GitHub仓库管理系统 - 多语言版
+BASE_DIR="/storage/emulated/0/mohong/Github/仓库集合"
+
+# 语言设置
+CURRENT_LANG="zh_CN"
+LANG_FILE="$HOME/.git_manager_lang"
+
+# 加载保存的语言设置
+if [ -f "$LANG_FILE" ]; then
+    CURRENT_LANG=$(cat "$LANG_FILE")
+fi
+
+# 语言文本定义
+declare -A TEXT_zh_CN TEXT_en_US
+
+# 中文文本
+TEXT_zh_CN=(
+    ["title"]="GitHub仓库管理系统"
+    ["enter_dir_error"]="错误：无法进入目录"
+    ["select_operation"]="请选择操作:"
+    ["view_all_status"]="查看所有仓库状态"
+    ["pull_all_updates"]="拉取所有仓库更新" 
+    ["manage_single_repo"]="管理单个仓库"
+    ["batch_stage_commit"]="批量设置暂存和提交"
+    ["switch_language"]="切换语言"
+    ["exit"]="退出"
+    ["input_choice"]="输入选择"
+    ["invalid_choice"]="无效选择，请重试"
+    ["repo_status"]="📁 仓库状态:"
+    ["synced"]="已同步"
+    ["unsynced"]="有未提交更改"
+    ["normal_dir"]="普通目录"
+    ["pulling_updates"]="🔄 拉取所有仓库更新..."
+    ["processing"]="处理:"
+    ["all_updated"]="✅ 所有仓库更新完成"
+    ["available_repos"]="可用Git仓库:"
+    ["no_git_repos"]="❌ 没有找到Git仓库"
+    ["select_repo_num"]="选择仓库编号:"
+    ["managing_repo"]="管理仓库:"
+    ["current_branch"]="当前分支:"
+    ["unknown"]="未知"
+    ["view_status"]="查看状态"
+    ["pull_updates"]="拉取更新"
+    ["view_logs"]="查看日志"
+    ["stage_commit"]="设置暂存和提交"
+    ["view_untracked"]="查看未跟踪文件"
+    ["return_menu"]="返回主菜单"
+    ["select_action"]="选择操作:"
+    ["stage_commit_title"]="📝 设置暂存和提交"
+    ["changed_files"]="变更文件:"
+    ["stage_all"]="暂存所有变更"
+    ["stage_specific"]="暂存指定文件"
+    ["commit_changes"]="提交变更"
+    ["stage_commit_all"]="暂存并提交所有"
+    ["enter_files"]="输入要暂存的文件路径（多个文件用空格分隔）:"
+    ["files"]="文件:"
+    ["enter_commit_msg"]="输入提交说明:"
+    ["message"]="说明:"
+    ["msg_empty"]="提交说明不能为空"
+    ["all_staged"]="✅ 所有变更已暂存"
+    ["files_staged"]="✅ 文件已暂存"
+    ["changes_committed"]="✅ 变更已提交"
+    ["all_staged_committed"]="✅ 所有变更已暂存并提交"
+    ["untracked_files"]="📄 未跟踪文件:"
+    ["batch_stage_title"]="🔄 批量设置暂存和提交"
+    ["changed_repos"]="有未提交变更"
+    ["all_synced"]="✅ 所有仓库都已同步，无需操作"
+    ["batch_operations"]="选择操作:"
+    ["stage_commit_all_repos"]="为所有仓库暂存并提交"
+    ["stage_commit_selected"]="选择特定仓库操作"
+    ["enter_unified_msg"]="输入统一的提交说明:"
+    ["select_repos"]="选择要操作的仓库（输入编号，多个用空格分隔）:"
+    ["repo_numbers"]="仓库编号:"
+    ["batch_complete"]="🎉 批量提交完成"
+    ["selected_complete"]="🎉 选择仓库提交完成"
+    ["goodbye"]="👋 再见！"
+    ["press_enter"]="按回车键继续..."
+    ["language_changed"]="语言已切换为中文"
+    ["switch_to_english"]="切换到英文"
+    ["switch_to_chinese"]="切换到中文"
+)
+
+# 英文文本
+TEXT_en_US=(
+    ["title"]="GitHub Repository Management System"
+    ["enter_dir_error"]="Error: Cannot enter directory"
+    ["select_operation"]="Please select operation:"
+    ["view_all_status"]="View all repository status"
+    ["pull_all_updates"]="Pull all repository updates"
+    ["manage_single_repo"]="Manage single repository"
+    ["batch_stage_commit"]="Batch stage and commit"
+    ["switch_language"]="Switch language"
+    ["exit"]="Exit"
+    ["input_choice"]="Enter choice"
+    ["invalid_choice"]="Invalid choice, please try again"
+    ["repo_status"]="📁 Repository Status:"
+    ["synced"]="Synced"
+    ["unsynced"]="Has uncommitted changes"
+    ["normal_dir"]="Normal directory"
+    ["pulling_updates"]="🔄 Pulling all repository updates..."
+    ["processing"]="Processing:"
+    ["all_updated"]="✅ All repositories updated"
+    ["available_repos"]="Available Git repositories:"
+    ["no_git_repos"]="❌ No Git repositories found"
+    ["select_repo_num"]="Select repository number:"
+    ["managing_repo"]="Managing repository:"
+    ["current_branch"]="Current branch:"
+    ["unknown"]="Unknown"
+    ["view_status"]="View status"
+    ["pull_updates"]="Pull updates"
+    ["view_logs"]="View logs"
+    ["stage_commit"]="Stage and commit"
+    ["view_untracked"]="View untracked files"
+    ["return_menu"]="Return to main menu"
+    ["select_action"]="Select action:"
+    ["stage_commit_title"]="📝 Stage and Commit"
+    ["changed_files"]="Changed files:"
+    ["stage_all"]="Stage all changes"
+    ["stage_specific"]="Stage specific files"
+    ["commit_changes"]="Commit changes"
+    ["stage_commit_all"]="Stage and commit all"
+    ["enter_files"]="Enter file paths to stage (multiple files separated by spaces):"
+    ["files"]="Files:"
+    ["enter_commit_msg"]="Enter commit message:"
+    ["message"]="Message:"
+    ["msg_empty"]="Commit message cannot be empty"
+    ["all_staged"]="✅ All changes staged"
+    ["files_staged"]="✅ Files staged"
+    ["changes_committed"]="✅ Changes committed"
+    ["all_staged_committed"]="✅ All changes staged and committed"
+    ["untracked_files"]="📄 Untracked files:"
+    ["batch_stage_title"]="🔄 Batch Stage and Commit"
+    ["changed_repos"]="Has uncommitted changes"
+    ["all_synced"]="✅ All repositories synced, no action needed"
+    ["batch_operations"]="Select operation:"
+    ["stage_commit_all_repos"]="Stage and commit for all repositories"
+    ["stage_commit_selected"]="Select specific repositories to operate"
+    ["enter_unified_msg"]="Enter unified commit message:"
+    ["select_repos"]="Select repositories to operate (enter numbers, multiple separated by spaces):"
+    ["repo_numbers"]="Repository numbers:"
+    ["batch_complete"]="🎉 Batch commit completed"
+    ["selected_complete"]="🎉 Selected repositories commit completed"
+    ["goodbye"]="👋 Goodbye!"
+    ["press_enter"]="Press Enter to continue..."
+    ["language_changed"]="Language switched to English"
+    ["switch_to_english"]="Switch to English"
+    ["switch_to_chinese"]="Switch to Chinese"
+)
+
+# 获取文本函数
+get_text() {
+    local key="$1"
+    local lang_var="TEXT_${CURRENT_LANG}[$key]"
+    echo "${!lang_var}"
+}
+
+# 保存语言设置
+save_language() {
+    echo "$CURRENT_LANG" > "$LANG_FILE"
+}
+
+# 切换语言函数
+switch_language() {
+    if [ "$CURRENT_LANG" = "zh_CN" ]; then
+        CURRENT_LANG="en_US"
+        echo "$(get_text "language_changed")"
+    else
+        CURRENT_LANG="zh_CN"
+        echo "$(get_text "language_changed")"
+    fi
+    save_language
+}
+
+# 进入工作目录
+cd "$BASE_DIR" || {
+    echo "$(get_text "enter_dir_error") $BASE_DIR"
+    exit 1
+}
+
+# 主循环
+while true; do
+    echo "========================================"
+    echo "   $(get_text "title")"
+    echo "========================================"
+
+    echo
+    echo "$(get_text "select_operation")"
+    echo "1. $(get_text "view_all_status")"
+    echo "2. $(get_text "pull_all_updates")"
+    echo "3. $(get_text "manage_single_repo")"
+    echo "4. $(get_text "batch_stage_commit")"
+    if [ "$CURRENT_LANG" = "zh_CN" ]; then
+        echo "5. $(get_text "switch_to_english")"
+    else
+        echo "5. $(get_text "switch_to_chinese")"
+    fi
+    echo "6. $(get_text "exit")"
+    echo
+    
+    read -p "$(get_text "input_choice") [1-6]: " choice
+
+    case $choice in
+        1)
+            echo
+            echo "$(get_text "repo_status")"
+            echo "----------------------------------------"
+            for dir in */; do
+                if [ -d "$dir/.git" ]; then
+                    echo -n "✅ ${dir%/}: "
+                    cd "$dir"
+                    if git status | grep -q "nothing to commit"; then
+                        echo "$(get_text "synced")"
+                    else
+                        echo "$(get_text "unsynced")"
+                    fi
+                    cd ..
+                else
+                    echo "📂 ${dir%/}: $(get_text "normal_dir")"
+                fi
+            done
+            ;;
+        2)
+            echo
+            echo "$(get_text "pulling_updates")"
+            for dir in */; do
+                if [ -d "$dir/.git" ]; then
+                    echo "$(get_text "processing") ${dir%/}"
+                    cd "$dir" && git pull && cd ..
+                    echo "----------------------------------------"
+                fi
+            done
+            echo "$(get_text "all_updated")"
+            ;;
+        3)
+            echo
+            echo "$(get_text "available_repos")"
+            i=1
+            repo_list=()
+            for dir in */; do
+                if [ -d "$dir/.git" ]; then
+                    echo "  $i. ${dir%/}"
+                    repo_list[$i]="${dir%/}"
+                    i=$((i+1))
+                fi
+            done
+
+            if [ $i -eq 1 ]; then
+                echo "$(get_text "no_git_repos")"
+                continue
+            fi
+
+            echo
+            read -p "$(get_text "select_repo_num"): " repo_num
+            selected_repo="${repo_list[$repo_num]}"
+            
+            if [ -n "$selected_repo" ]; then
+                cd "$selected_repo"
+                echo
+                echo "$(get_text "managing_repo"): $selected_repo"
+                echo "$(get_text "current_branch"): $(git branch --show-current 2>/dev/null || echo "$(get_text "unknown")")"
+                
+                while true; do
+                    echo
+                    echo "1. $(get_text "view_status")"
+                    echo "2. $(get_text "pull_updates")"
+                    echo "3. $(get_text "view_logs")"
+                    echo "4. $(get_text "stage_commit")"
+                    echo "5. $(get_text "view_untracked")"
+                    echo "6. $(get_text "return_menu")"
+                    read -p "$(get_text "select_action"): " sub_choice
+                    
+                    case $sub_choice in
+                        1) 
+                            echo
+                            git status
+                            ;;
+                        2) 
+                            echo
+                            git pull
+                            ;;
+                        3) 
+                            echo
+                            git log --oneline -5
+                            ;;
+                        4)
+                            echo
+                            echo "$(get_text "stage_commit_title")"
+                            echo "----------------------------------------"
+                            
+                            # 显示变更文件
+                            echo "$(get_text "changed_files")"
+                            git status --short
+                            
+                            echo
+                            echo "$(get_text "select_action"):"
+                            echo "1. $(get_text "stage_all")"
+                            echo "2. $(get_text "stage_specific")"
+                            echo "3. $(get_text "commit_changes")"
+                            echo "4. $(get_text "stage_commit_all")"
+                            read -p "$(get_text "input_choice") [1-4]: " stage_choice
+                            
+                            case $stage_choice in
+                                1)
+                                    git add .
+                                    echo "$(get_text "all_staged")"
+                                    ;;
+                                2)
+                                    echo "$(get_text "enter_files")"
+                                    read -p "$(get_text "files"): " files
+                                    if [ -n "$files" ]; then
+                                        git add $files
+                                        echo "$(get_text "files_staged")"
+                                    fi
+                                    ;;
+                                3)
+                                    echo "$(get_text "enter_commit_msg")"
+                                    read -p "$(get_text "message"): " commit_msg
+                                    if [ -n "$commit_msg" ]; then
+                                        git commit -m "$commit_msg"
+                                        echo "$(get_text "changes_committed")"
+                                    else
+                                        echo "$(get_text "msg_empty")"
+                                    fi
+                                    ;;
+                                4)
+                                    echo "$(get_text "enter_commit_msg")"
+                                    read -p "$(get_text "message"): " commit_msg
+                                    if [ -n "$commit_msg" ]; then
+                                        git add .
+                                        git commit -m "$commit_msg"
+                                        echo "$(get_text "all_staged_committed")"
+                                    else
+                                        echo "$(get_text "msg_empty")"
+                                    fi
+                                    ;;
+                                *)
+                                    echo "$(get_text "invalid_choice")"
+                                    ;;
+                            esac
+                            ;;
+                        5)
+                            echo
+                            echo "$(get_text "untracked_files")"
+                            git status --porcelain | grep "^??" | cut -c4-
+                            ;;
+                        6) 
+                            cd "$BASE_DIR"
+                            break
+                            ;;
+                        *) 
+                            echo "$(get_text "invalid_choice")"
+                            ;;
+                    esac
+                done
+            else
+                echo "$(get_text "invalid_choice")"
+            fi
+            ;;
+        4)
+            echo
+            echo "$(get_text "batch_stage_title")"
+            echo "----------------------------------------"
+            
+            # 收集有变更的仓库
+            changed_repos=()
+            i=1
+            for dir in */; do
+                if [ -d "$dir/.git" ]; then
+                    cd "$dir"
+                    if ! git status | grep -q "nothing to commit"; then
+                        echo "  $i. ${dir%/} - $(get_text "changed_repos")"
+                        changed_repos[$i]="${dir%/}"
+                        i=$((i+1))
+                    fi
+                    cd ..
+                fi
+            done
+            
+            if [ $i -eq 1 ]; then
+                echo "$(get_text "all_synced")"
+                continue
+            fi
+            
+            echo
+            echo "$(get_text "batch_operations")"
+            echo "1. $(get_text "stage_commit_all_repos")"
+            echo "2. $(get_text "stage_commit_selected")"
+            read -p "$(get_text "input_choice") [1-2]: " batch_choice
+            
+            case $batch_choice in
+                1)
+                    echo "$(get_text "enter_unified_msg")"
+                    read -p "$(get_text "message"): " batch_msg
+                    if [ -n "$batch_msg" ]; then
+                        for dir in */; do
+                            if [ -d "$dir/.git" ]; then
+                                cd "$dir"
+                                if ! git status | grep -q "nothing to commit"; then
+                                    echo "$(get_text "processing") ${dir%/}"
+                                    git add .
+                                    git commit -m "$batch_msg"
+                                    echo "✅ $(get_text "changes_committed")"
+                                fi
+                                cd ..
+                            fi
+                        done
+                        echo "$(get_text "batch_complete")"
+                    else
+                        echo "$(get_text "msg_empty")"
+                    fi
+                    ;;
+                2)
+                    echo "$(get_text "select_repos")"
+                    read -p "$(get_text "repo_numbers"): " repo_nums
+                    
+                    echo "$(get_text "enter_commit_msg")"
+                    read -p "$(get_text "message"): " commit_msg
+                    
+                    if [ -n "$repo_nums" ] && [ -n "$commit_msg" ]; then
+                        for num in $repo_nums; do
+                            repo="${changed_repos[$num]}"
+                            if [ -n "$repo" ]; then
+                                echo "$(get_text "processing"): $repo"
+                                cd "$repo"
+                                git add .
+                                git commit -m "$commit_msg"
+                                echo "✅ $(get_text "changes_committed")"
+                                cd ..
+                            fi
+                        done
+                        echo "$(get_text "selected_complete")"
+                    else
+                        echo "$(get_text "msg_empty")"
+                    fi
+                    ;;
+                *)
+                    echo "$(get_text "invalid_choice")"
+                    ;;
+            esac
+            ;;
+        5)
+            switch_language
+            ;;
+        6)
+            echo "$(get_text "goodbye")"
+            exit 0
+            ;;
+        *)
+            echo "$(get_text "invalid_choice")"
+            ;;
+    esac
+    
+    echo
+    read -p "$(get_text "press_enter")"
+done
