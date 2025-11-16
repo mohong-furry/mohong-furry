@@ -67,4 +67,5 @@ Lianyungang, Jiangsu, China (GMT+8)
 ---
 
 ### 🌐 Navigation Page / 导航页
-[MoHong Web Home](https://mohong-furry.github.io/mohong-furry/MohongofWEB/)
+	- [MoHong Web Home](https://mohong-furry.github.io/mohong-furry/MohongofWEB/)
+	- [GitHub Profile](https://github.com/mohong-furry)

@@ -15,6 +15,7 @@
 ### 📚 当前关注
 - 正在学习 Python 语法
 - 计划学习 C 语言和 Java
+- 计划学习 Assembly (汇编语言)
 - 学业繁忙，编码时间有限
 
 ### 📫 联系方式
@@ -35,23 +36,35 @@
 ### 👋 About Me
 - A furry enthusiast from China
 - Middle school student (8th Grade)
-- Coding beginner passionate about programming
+- Programming beginner with great passion
 
 ### 🛠 Skills & Languages
 - **Chinese** - Native
-- **English** - Basic (limited direct communication)
-- **Python** - Basic proficiency
+- **English** - Basic (cannot communicate directly in English)
+- **Python** - Basic skills
 - **Shell** - Familiar with common syntax
 - **HTML** - Pure HTML only
 
 ### 📚 Current Focus
 - Learning Python syntax
-- Planning to learn C and Java
-- Limited coding time due to studies
+- Planning to learn C and Java  
+- Planning to learn Assembly
+- Limited coding time due to academic workload
 
 ### 📫 Contact
-- **QQ**: 2537456446
-- **QQ Group**: [https://qm.qq.com/q/qv9RK4Zm8]
+- **QQ**: 
+  - 2537456446
+  - 3043178410
+- **QQ Groups**: 
+  - [My Den](https://qm.qq.com/q/YsEETRK6Wu) 1007151397
+    - Recommended to join this one
+  - [My Den](https://qm.qq.com/q/U4NM8hbk2W) 512645310
+    - Can join, but not recommended
 
 ### 🌐 Location
 Lianyungang, Jiangsu, China (GMT+8)
+
+---
+
+### 🌐 Navigation Page / 导航页
+[MoHong Web Home](https://mohong-furry.github.io/mohong-furry/MohongofWEB/)
