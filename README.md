@@ -22,11 +22,9 @@
 	- 2537456446
 	- 3043178410
 - **QQ群**: 
-	- https://qm.qq.com/q/YsEETRK6Wu
-		- 1007151397
+	- [我的小窝](https://qm.qq.com/q/YsEETRK6Wu)1007151397
 		- 推荐加入这一个
-	- https://qm.qq.com/q/U4NM8hbk2W
-		- 512645310
+	- [我的小窝](https://qm.qq.com/q/U4NM8hbk2W)512645310
 		- 可加入，但不推荐
 
 ### 🌐 所在地
